@@ -1,0 +1,16 @@
+$background_col:  #F7F7F9;
+$font_col:        #555555;
+
+$margin_large:    60px;
+$padding_small:   10px;
+
+$border_radius_small:   10px;
+$border_radius_large:   30px;
+
+#main{
+  background-color: $background_col !important;
+  color:            $font_col !important;
+  margin-top:       $margin_large;
+  padding:          $padding_small;
+  border-radius:    $border_radius_large $border_radius_small $border_radius_large $border_radius_small;
+}

@@ -1,0 +1,23 @@
+<% if user_signed_in? %>
+	<div class="navbar navbar-fixed-top">
+		<nav class="navbar-inner">
+			<div class="container">
+			 	<div class="row-fluid">
+					<div class="span4 offset8">
+						<span class="pull-right">
+							<ul class="nav">
+								<li class="divider-vertical"></li>
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"> <%= current_user.twitter_nickname %> <b class="caret"></b> </a>
+									<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+										<li role="presentation"> <%= link_to "Sign out", destroy_user_session_path,  {method: :delete,role: "menuitem", tabindex: "-1" } %></li>
+									</ul>
+								</li>
+							</ul>
+						</span>
+					</div>
+				</div>
+			</div>
+		</nav>
+	</div>
+<% end %>
