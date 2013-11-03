@@ -1,0 +1,31 @@
+<%= form_for([@problem, @alternative], :remote => true, html: {class: "form-horizontal alt-form"}) do |f| %>
+  <% if @alternative.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@alternative.errors.count, "error") %> prohibited this alternative from being saved:</h2>
+
+      <ul>
+      <% @alternative.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+	<div class="control-group">
+	    <%= f.label :name, :class => "control-label" %>
+	    <div class="controls">
+	    	<%= f.text_field :name %>
+	    </div>
+	</div>
+	
+	<div class="control-group">
+		<%= f.label :desc, :class => "control-label" %>
+		<div class="controls">
+			<%= f.text_area :desc %>
+		</div>
+	</div>
+  	<div class="control-group">
+		<div class="controls">
+    		<%= f.submit @alternative.new_record? ? "Create Alternative" : "Update Alternative", :id => "create_alternative", :class => "btn btn-primary" %>
+  		</div>
+	</div>
+<% end %>

@@ -1,0 +1,45 @@
+<%= form_for [@problem, @criterium] do |f| %>
+  <% if @criterium.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@criterium.errors.count, "error") %> prohibited this criterium from being saved:</h2>
+
+      <ul>
+      <% @criterium.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :desc %><br>
+    <%= f.text_area :desc %>
+  </div>
+  <div class="field">
+    <%= f.label :tw_hash %><br>
+    <%= f.text_field :tw_hash %>
+  </div>
+  <div class="field">
+    <%= f.label :problem %><br>
+    <%= f.text_field :problem %>
+  </div>
+  <div class="field">
+    <%= f.label :alternatives_matrix %><br>
+    <%= f.text_area :alternatives_matrix %>
+  </div>
+  <div class="field">
+    <%= f.label :alternatives_value %><br>
+    <%= f.text_area :alternatives_value %>
+  </div>
+  <div class="field">
+    <%= f.label :weight %><br>
+    <%= f.text_field :weight %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

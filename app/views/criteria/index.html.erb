@@ -1,0 +1,29 @@
+<h1>Listing criteria</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Desc</th>
+      <th>Tw hash</th>
+      <th>Problem</th>
+      <th>Alternatives matrix</th>
+      <th>Alternatives value</th>
+      <th>Weight</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @criteria.each do |criterium| %>
+      <tr>
+        <td><%= criterium.name %></td>
+        <td><%= criterium.desc %></td>
+        <td><%= criterium.tw_hash %></td>
+        <td><%= criterium.problem %></td>
+        <td><%= criterium.alternatives_matrix %></td>
+        <td><%= criterium.alternatives_value %></td>
+        <td><%= criterium.weight %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

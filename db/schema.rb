@@ -11,7 +11,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130826131514) do
+ActiveRecord::Schema.define(version: 20130927163526) do
+
+  create_table "alternatives", force: true do |t|
+    t.string   "name"
+    t.text     "desc"
+    t.string   "tw_hash"
+    t.decimal  "value"
+    t.integer  "problem_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "reject",     default: false
+  end
+
+  add_index "alternatives", ["problem_id"], name: "index_alternatives_on_problem_id"
+
+  create_table "criteria", force: true do |t|
+    t.string   "name"
+    t.text     "desc"
+    t.string   "tw_hash"
+    t.integer  "problem_id"
+    t.text     "alternatives_matrix"
+    t.text     "alternatives_value"
+    t.decimal  "weight"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "criteria", ["problem_id"], name: "index_criteria_on_problem_id"
 
   create_table "installs", force: true do |t|
     t.string   "email",                  default: "", null: false
@@ -30,6 +57,15 @@ ActiveRecord::Schema.define(version: 20130826131514) do
 
   add_index "installs", ["email"], name: "index_installs_on_email", unique: true
   add_index "installs", ["reset_password_token"], name: "index_installs_on_reset_password_token", unique: true
+
+  create_table "problems", force: true do |t|
+    t.string   "name"
+    t.text     "desc"
+    t.string   "tw_hash"
+    t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false
@@ -50,5 +86,14 @@ ActiveRecord::Schema.define(version: 20130826131514) do
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+
+  create_table "users_problems", force: true do |t|
+    t.integer "user_id"
+    t.integer "problem_id"
+    t.boolean "owner"
+  end
+
+  add_index "users_problems", ["problem_id"], name: "index_users_problems_on_problem_id"
+  add_index "users_problems", ["user_id"], name: "index_users_problems_on_user_id"
 
 end

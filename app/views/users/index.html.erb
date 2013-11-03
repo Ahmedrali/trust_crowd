@@ -1,13 +1,41 @@
-<div class="row-fluid">
+<div class="row">
 	<div class="span12">
-	    <div class="container-fluid">
-		    <div class="row-fluid">
-			    <div class="span2">
-					    <div class="btn-group btn-group-vertical">
-					    	<%= link_to "Create new Problem", "#", class: "btn" %>
-					    </div>
+	    <div class="container">
+		    <div class="row">
+			    <div class="span3" align="left">
+			        <ul class="nav nav-list nav-stacked">
+			        	<li> <a href="<%= new_problem_path %>"> Create new Problem </a> </li>
+					    <li class="nav-header">Pending Problems</li>
+					    <% @pending_problems.each do |p| %>
+					    	<li>
+					    		<%= link_to p.name, problem_path(p), :remote => true, :class => "prob", :id => p.id %>
+				    		</li>
+					    <% end %>
+				    </ul>
 			    </div>
-			    <div class="span10">
+			    <div class="span9">
+			    	<div class="tabbable">
+			    	    <ul class="nav nav-tabs">
+						    <li class="active"> <a href="#prob_desc" data-toggle="tab">Problem Description</a> </li>
+						    <li> <a href="#criteria" data-toggle="tab">Comparison Criteria</a> </li>
+						    <li> <a href="#alternatives" data-toggle="tab">Alternatives</a> </li>
+					    </ul>
+					    <div class="tab-content">
+					    	<div id="prob_desc" class="tab-pane active">
+				    		</div>
+				    		<div id="criteria"  class="tab-pane">
+				    			<div align="center">
+					    			<button type="button" class="btn" data-toggle="collapse" data-target="#new_criteria"> New Criteria </button>
+					    			<div id="new_criteria" class="collapse">
+				    				</div>
+				    			</div>
+					    		<div id="prob_criteria">
+					    		</div>
+				    		</div>
+				    		
+				    		<%= render 'alternatives' %>
+			    		</div>
+		    		</div>
 			    </div>
 		    </div>
 	    </div>

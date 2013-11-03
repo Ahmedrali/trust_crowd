@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @problem.name %>
+</p>
+
+<p>
+  <strong>Desc:</strong>
+  <%= @problem.desc %>
+</p>
+
+<p>
+  <strong>Tw hash:</strong>
+  <%= @problem.tw_hash %>
+</p>
+
+<%= link_to 'Edit', edit_problem_path(@problem) %> |
+<%= link_to 'Back', problems_path %>
