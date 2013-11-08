@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130927163526) do
+ActiveRecord::Schema.define(version: 20131103140513) do
 
   create_table "alternatives", force: true do |t|
     t.string   "name"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 20130927163526) do
     t.decimal  "weight"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "reject",              default: false
   end
 
   add_index "criteria", ["problem_id"], name: "index_criteria_on_problem_id"

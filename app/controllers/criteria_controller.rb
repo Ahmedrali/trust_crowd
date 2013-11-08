@@ -1,63 +1,66 @@
 class CriteriaController < ApplicationController
-  before_action :set_criterium, only: [:show, :edit, :update, :destroy]
+  before_action :set_criterium, only: [:show, :edit, :update, :destroy, :active]
   before_action :set_problem
   
   # GET /problems/:problem_id/criteria
-  # GET /criteria.json
   def index
-    @criteria = @problem.criteria.all
+    @criteria = @problem.criteria.where(:reject => false).paginate(:page => params[:page])
     render layout: false
   end
 
+  # GET /problems/:problem_id/criteria
+  def rejected
+    @criteria = @problem.criteria.where(:reject => true).paginate(:page => params[:page])
+    render layout: false
+  end
+  
   # GET /problems/:problem_id/criteria/1
   def show
+    render layout: false
   end
 
   # GET /problems/:problem_id/criteria/new
   def new
-    @criterium = Criterium.new
+    @criterium = @problem.criteria.new
     render layout: false
   end
 
   # GET /problems/:problem_id/criteria/1/edit
   def edit
+    render layout: false
   end
 
   # POST /problems/:problem_id/criteria
   def create
-    @criterium = Criterium.new(criterium_params)
-
-    respond_to do |format|
-      if @criterium.save
-        format.html { redirect_to @criterium, notice: 'Criterium was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @criterium }
-      else
-        format.html { render action: 'new' }
-        format.json { render json: @criterium.errors, status: :unprocessable_entity }
-      end
+    @criterium = @problem.criteria.new(criterium_params)
+    if @criterium.save
+      render text: @criterium.id, layout: false
+    else
+      render template: "criteria/new.html.erb", layout: false
     end
   end
 
   # PATCH/PUT /problems/:problem_id/criteria/1
   def update
-    respond_to do |format|
-      if @criterium.update(criterium_params)
-        format.html { redirect_to @criterium, notice: 'Criterium was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render action: 'edit' }
-        format.json { render json: @criterium.errors, status: :unprocessable_entity }
-      end
+    if @criterium.update(criterium_params)
+      render text: @criterium.id, layout: false
+    else
+      render template: "criteria/edit.html.erb", layout: false
     end
   end
 
   # DELETE /problems/:problem_id/criteria/1
   def destroy
-    @criterium.destroy
-    respond_to do |format|
-      format.html { redirect_to criteria_url }
-      format.json { head :no_content }
-    end
+    @criterium.reject = true
+    @criterium.save
+    render text: "ok", layout: false
+  end
+
+  # GET /problems/:problem_id/criteria/1
+  def active
+    @criterium.reject = false
+    @criterium.save
+    render text: "ok", layout: false
   end
 
   private

@@ -1,4 +1,4 @@
-<%= form_for [@problem, @criterium] do |f| %>
+<%= form_for([@problem, @criterium], :remote => true, html: {class: "form-horizontal criteria-form"}) do |f| %>
   <% if @criterium.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@criterium.errors.count, "error") %> prohibited this criterium from being saved:</h2>
@@ -11,35 +11,24 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :name %><br>
-    <%= f.text_field :name %>
+  <div class="control-group">
+		<%= f.label :name, :class => "control-label" %>
+	    <div class="controls">
+	    	<%= f.text_field :name %>
+	    </div>
   </div>
-  <div class="field">
-    <%= f.label :desc %><br>
-    <%= f.text_area :desc %>
+
+  <div class="control-group">
+		<%= f.label :desc, :class => "control-label" %>
+		<div class="controls">
+			<%= f.text_area :desc %>
+		</div>
   </div>
-  <div class="field">
-    <%= f.label :tw_hash %><br>
-    <%= f.text_field :tw_hash %>
+  
+  <div class="control-group">
+		<div class="controls">
+    		<%= f.submit @criterium.new_record? ? "Create Criteria" : "Update Criteria", :id => "create_criteria", :class => "btn btn-primary" %>
+  		</div>
   </div>
-  <div class="field">
-    <%= f.label :problem %><br>
-    <%= f.text_field :problem %>
-  </div>
-  <div class="field">
-    <%= f.label :alternatives_matrix %><br>
-    <%= f.text_area :alternatives_matrix %>
-  </div>
-  <div class="field">
-    <%= f.label :alternatives_value %><br>
-    <%= f.text_area :alternatives_value %>
-  </div>
-  <div class="field">
-    <%= f.label :weight %><br>
-    <%= f.text_field :weight %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+  
 <% end %>

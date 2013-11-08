@@ -1,0 +1,31 @@
+<% if @criteria.count > 0 %>
+	<h3>Rejected criteria</h3>
+	<table class="table table-hover">
+	  <thead>
+	    <tr>
+	      <th>Name</th>
+	      <th>Desc</th>
+	      <th>Tw hash</th>
+	      <th>Weight</th>
+	      <th></th>
+	    </tr>
+	  </thead>
+	
+	  <tbody>
+	    <% @criteria.each do |criterium| %>
+	      <tr>
+	        <td><%= criterium.name %></td>
+	        <td><%= criterium.desc %></td>
+	        <td><%= criterium.tw_hash %></td>
+	        <td><%= criterium.weight %></td>
+	        <td><%= link_to "Active", active_problem_criterium_path(@problem, criterium), :class => "criteria-active", :remote => true %></td>
+	      </tr>
+	    <% end %>
+	  </tbody>
+	</table>
+	<%= will_paginate @criteria, :class => "criteria-rejected-pagination pagination" %>
+<% else %>
+	<div align="center">
+		<h4> There is no rejected criteria.</h4>
+	</div>
+<% end %>

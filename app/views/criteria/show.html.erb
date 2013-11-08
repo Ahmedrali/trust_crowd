@@ -1,39 +1,13 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Name:</strong>
-  <%= @criterium.name %>
-</p>
+<p> <strong><%= @criterium.name %>: </strong> #<%= @criterium.tw_hash %> </p>
 
-<p>
-  <strong>Desc:</strong>
-  <%= @criterium.desc %>
-</p>
+<dl>
+	<dt> Weight. </dt>
+	<dd><%= @criterium.weight %></dd>
+</dl>
 
-<p>
-  <strong>Tw hash:</strong>
-  <%= @criterium.tw_hash %>
-</p>
-
-<p>
-  <strong>Problem:</strong>
-  <%= @criterium.problem %>
-</p>
-
-<p>
-  <strong>Alternatives matrix:</strong>
-  <%= @criterium.alternatives_matrix %>
-</p>
-
-<p>
-  <strong>Alternatives value:</strong>
-  <%= @criterium.alternatives_value %>
-</p>
-
-<p>
-  <strong>Weight:</strong>
-  <%= @criterium.weight %>
-</p>
-
-<%= link_to 'Edit', edit_criterium_path(@criterium) %> |
-<%= link_to 'Back', criteria_path %>
+<dl>
+	<dt> Description. </dt>
+	<dd><%= @criterium.desc %></dd>
+</dl>
