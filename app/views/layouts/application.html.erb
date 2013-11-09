@@ -9,12 +9,8 @@
 	<body>
 		<%= render 'layouts/navigation' %>
 		<div id="main" class="container">
-			<div class="row">
-				<div class="span12"> 
-					<%= render 'layouts/messages' %>
-					<%= yield %>
-				</div>
-			</div>
+			<%= render 'layouts/messages' %>
+			<%= yield %>
 		</div>
 	</body>
 </html>

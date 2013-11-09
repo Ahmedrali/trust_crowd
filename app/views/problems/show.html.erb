@@ -1,19 +1,19 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Name:</strong>
-  <%= @problem.name %>
-</p>
+<p> <strong><%= @problem.name %>: </strong> #<%= @problem.tw_hash %> </p>
 
-<p>
-  <strong>Desc:</strong>
-  <%= @problem.desc %>
-</p>
+<dl>
+	<dt> Description. </dt>
+	<dd><%= @problem.desc %></dd>
+</dl>
 
-<p>
-  <strong>Tw hash:</strong>
-  <%= @problem.tw_hash %>
-</p>
 
-<%= link_to 'Edit', edit_problem_path(@problem) %> |
-<%= link_to 'Back', problems_path %>
+<% if @problem.pending? %>
+	<%= link_to 'Edit', edit_problem_path(@problem), :class => "btn btn-primary problem-edit", :remote => true %> | 
+	<%= link_to 'Activate the problem', active_problem_path(@problem), :class => "btn btn-primary problem-activate", :remote => true, data: { confirm: 'Are you sure?' } %>
+<% end %>
+
+
+<% if @problem.active? %>
+	<%= link_to 'Close the problem', close_problem_path(@problem), :class => "btn btn-primary problem-close", :remote => true, data: { confirm: 'Are you sure?' } %>
+<% end %>

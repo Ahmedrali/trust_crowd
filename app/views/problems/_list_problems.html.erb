@@ -1,0 +1,10 @@
+<li class="nav-header"> <h5> <%= @status.camelize %> Problems <h5> </li>
+<% unless @problems.empty? %>
+	<% @problems.each do |p| %>
+		<li>
+			<%= link_to p.name, problem_path(p), :remote => true, :class => "prob", :id => p.id %>
+		</li>	
+	<% end %>
+<% else %>
+	<h6> No <%= @status.camelize %> problems.</h6>
+<% end %>

@@ -1,35 +1,50 @@
-<div class="row">
-	<div class="span12">
-	    <div class="container">
-		    <div class="row">
-			    <div class="span3" align="left">
-			        <ul class="nav nav-list nav-stacked">
-			        	<li> <a href="<%= new_problem_path %>"> Create new Problem </a> </li>
-					    <li class="nav-header">Pending Problems</li>
-					    <% @pending_problems.each do |p| %>
-					    	<li>
-					    		<%= link_to p.name, problem_path(p), :remote => true, :class => "prob", :id => p.id %>
-				    		</li>
-					    <% end %>
-				    </ul>
-			    </div>
-			    <div class="span9">
-			    	<div class="tabbable">
-			    	    <ul class="nav nav-tabs">
-						    <li class="active"> <a href="#prob_desc" data-toggle="tab">Problem Description</a> </li>
-						    <li> <a href="#criteria" data-toggle="tab">Comparison Criteria</a> </li>
-						    <li> <a href="#alternatives" data-toggle="tab">Alternatives</a> </li>
-					    </ul>
-					    <div class="tab-content">
-					    	<div id="prob_desc" class="tab-pane active">
-				    		</div>
-				    		<%= render 'criteria' %>
-				    		
-				    		<%= render 'alternatives' %>
-			    		</div>
-		    		</div>
-			    </div>
-		    </div>
-	    </div>
-	</div>
+<script type="text/javascript">
+	$(function() {
+		tc.getProblems("pending")
+		tc.getProblems("active")
+		tc.getProblems("closed")
+		tc.bindCollapse()
+		tc.bindCreateNewProblem()
+	});
+</script>
+
+<div class="container">
+	
+    <div class="side_links" align="left">
+    	<ul class="nav nav-list nav-stacked">
+    		<li> 
+				<button class="btn btn-primary" type="button" id="create_new_problem"> <i class='icon-plus-sign icon-white icon-large'></i> Create new Problem </button>
+			 </li>
+	    </ul>
+        <ul id="pending_problems" class="nav nav-list nav-stacked">
+        	<!-- Will Contain the list of bending problem by JS-->
+	    </ul>
+	    
+	    <ul id="active_problems" class="nav nav-list nav-stacked">
+	    	<!-- Will Contain the list of active problem by JS-->
+	    </ul>
+	    
+	    <ul id="closed_problems" class="nav nav-list nav-stacked">
+	    	<!-- Will Contain the list of closed problem by JS-->
+	    </ul>
+    </div>
+    <div class="details">
+    	<div id="problem_details" class="tabbable">
+    	    <ul class="nav nav-tabs">
+			    <li class="active"> <a href="#prob_desc" data-toggle="tab">Problem Description</a> </li>
+			    <li> <a href="#criteria" data-toggle="tab">Comparison Criteria</a> </li>
+			    <li> <a href="#alternatives" data-toggle="tab">Alternatives</a> </li>
+		    </ul>
+		    <div class="tab-content">
+	    		<%= render 'problem' %>
+	    		
+	    		<%= render 'criteria' %>
+	    		
+	    		<%= render 'alternatives' %>
+    		</div>
+		</div>
+		<div id="new_problem">
+			<!-- Will Contain the form of creating new problem by JS-->
+		</div>
+    </div>
 </div>

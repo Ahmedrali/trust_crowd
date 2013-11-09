@@ -1,71 +1,93 @@
 class ProblemsController < ApplicationController
-  before_action :set_problem, only: [:show, :edit, :update, :destroy]
-
+  before_action :set_problem, only: [:show, :edit, :update, :destroy, :active, :close, :participate]
   # GET /problems
   # GET /problems.json
   def index
-    @problems = Problem.all
-  end
-
-  # GET /problems/1
-  # GET /problems/1.json
-  def show
+    problem_status = params["status"]
+    @problems = []
+    if Problem::STATUS.include?(problem_status)
+      @problems = current_user.problems.where(:status => problem_status)
+      @status = problem_status
+    end
     respond_to do |format|
       format.js
     end
+  end
+  
+  def search
+    @q = params[:q] || ""
+    search_for = "%#{@q}%"
+    @problems = Problem.where("name like ? or desc like ? or tw_hash like ? ", search_for, search_for, search_for).paginate(:page => params[:page])
+  end
+  
+  # GET /problems/1
+  # GET /problems/1.json
+  def show
+    render layout: false
   end
 
   # GET /problems/new
   def new
     @problem = Problem.new
+    render layout: false
   end
 
   # GET /problems/1/edit
   def edit
+    render layout: false
   end
 
   # POST /problems
   # POST /problems.json
   def create
     @problem = Problem.new(problem_params)
-    @problem.tw_hash  = "#tc_p#{Problem.count}"
+    @problem.tw_hash  = "tc_p#{Problem.count}"
     @problem.status   = Problem::PENDING
-    respond_to do |format|
-      if @problem.save
-        UsersProblem.create(:user => current_user, :problem => @problem, :owner => true)
-        format.html { redirect_to root_path, notice: 'Problem was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @problem }
-      else
-        format.html { render action: 'new' }
-        format.json { render json: @problem.errors, status: :unprocessable_entity }
-      end
+    if @problem.save
+      UsersProblem.create(:user => current_user, :problem => @problem, :owner => true)
+      render text: @problem.id, layout: false
+    else
+      render template: "problems/new.html.erb", layout: false
     end
   end
 
   # PATCH/PUT /problems/1
   # PATCH/PUT /problems/1.json
   def update
-    respond_to do |format|
-      if @problem.update(problem_params)
-        format.html { redirect_to @problem, notice: 'Problem was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render action: 'edit' }
-        format.json { render json: @problem.errors, status: :unprocessable_entity }
-      end
+    if @problem.update(problem_params)
+      render text: @problem.id, layout: false
+    else
+      render template: "problems/edit.html.erb", layout: false
     end
   end
 
   # DELETE /problems/1
   # DELETE /problems/1.json
   def destroy
-    @problem.destroy
-    respond_to do |format|
-      format.html { redirect_to problems_url }
-      format.json { head :no_content }
+    redirect_to root_path
+  end
+
+  # GET /problems/1/active
+  def active
+    if @problem.activate
+      render text: @problem.id, layout: false
+    end
+  end
+  
+  # GET /problems/1/active
+  def close
+    if @problem.close
+      render text: @problem.id, layout: false
     end
   end
 
+  # GET /problems/1/participate
+  def participate
+    if @problem and !@problem.users.exists?(current_user)
+      UsersProblem.create(:user => current_user, :problem => @problem, :owner => false)
+      redirect_to root_path, :notice => "Successfully participated."
+    end
+  end
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_problem
@@ -74,6 +96,7 @@ class ProblemsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def problem_params
-      params.require(:problem).permit(:name, :desc, :tw_hash, :status)
+      params.require(:problem).permit(:name, :desc)
     end
+    
 end

@@ -1,96 +1,115 @@
-$ ->
-  bindCollapse()
-  
-  $(".prob").bind "ajax:complete", (et, e) ->
-    $("#alternatives_content").html '<p class="text-center"> ... </p>'
-    $("#criteria_content").html '<p class="text-center"> ... </p>'
-    $("#prob_desc").html e.responseText
-    id = $(this).attr("id")
-    handleCriteria id
-    handleAlternatives id
+window.tc = {};
 
-handleCriteria = (id) ->
-  getActiveCriteria id
-  getRejectedCriteria id
-  bindCreateCriteria id
-  hideCriteriaContentArea()
+window.tc.getProblems = (status) ->
+  $.ajax({
+      type: "GET",
+      url: "/problems",
+      data: {"status": status},
+      dataType: "script",
+      success: ->
+        $(".prob").bind "ajax:complete", (et, e) ->
+          id = $(this).attr("id")
+          tc.showProblemDetails(id, e.responseText)
+  });
 
-handleAlternatives = (id) ->
-  getActiveAlternatives id
-  getRejectedAlternatives id
-  bindCreateAlternative id
-  hideAlternativesContentArea()
+window.tc.showProblemDetails = (id, prob_desc) ->
+  $("#problem_details").show()
+  $("#new_problem").hide()
+  $("#alternatives_content").html '<p class="text-center"> ... </p>'
+  $("#criteria_content").html '<p class="text-center"> ... </p>'
+  $("#prob_desc").html prob_desc
+  tc.bindEditProblemAction()
+  tc.bindActiveProblemAction()
+  tc.bindCloseProblemAction()
+  tc.handleCriteria id
+  tc.handleAlternatives id
+
+window.tc.handleCriteria = (id) ->
+  tc.getActiveCriteria id
+  tc.getRejectedCriteria id
+  tc.bindCreateCriteria id
+  tc.hideCriteriaContentArea()
+
+window.tc.handleAlternatives = (id) ->
+  tc.getActiveAlternatives id
+  tc.getRejectedAlternatives id
+  tc.bindCreateAlternative id
+  tc.hideAlternativesContentArea()
     
-bindCollapse = ->
+window.tc.bindCollapse = ->
   $("#alternatives_content_switch").on "click", ->
     if($("#alternatives_content").hasClass("in"))
-      hideAlternativesContentArea()
+      tc.hideAlternativesContentArea()
     else
-      showAlternativesContentArea()
+      tc.showAlternativesContentArea()
   
   $("#criteria_content_switch").on "click", ->
     if($("#criteria_content").hasClass("in"))
-      hideCriteriaContentArea()      
+      tc.hideCriteriaContentArea()      
     else
-      showCriteriaContentArea()
+      tc.showCriteriaContentArea()
 
-getActiveAlternatives = (id) ->
+## --------------------
+## Alternatives Methods
+## --------------------
+
+window.tc.getActiveAlternatives = (id) ->
   $.ajax
     url: '/problems/' + id + '/alternatives'
     type: "get"
     success: (resp) ->
-      bindActiveAlternativesLinks id, resp
+      tc.bindActiveAlternativesLinks id, resp
     error: (xhr, ajaxOptions, thrownError)->
       alert(thrownError)
     cache: false
 
-getRejectedAlternatives = (id) ->
+window.tc.getRejectedAlternatives = (id) ->
   $.ajax
     url: '/problems/' + id + '/alternatives/rejected'
     type: "get"
     success: (resp) ->
-      bindRejectedAlternativesLinks id, resp
+      tc.bindRejectedAlternativesLinks id, resp
     error: (xhr, ajaxOptions, thrownError)->
       alert(thrownError)
     cache: false
 
-bindActiveAlternativesLinks = (id, resp) ->
+window.tc.bindActiveAlternativesLinks = (id, resp) ->
   $("#prob_active_alts").html resp
   
   $(".alt-details").bind "ajax:complete", (et, e) ->
-    showAlternativesContentArea()
+    tc.showAlternativesContentArea()
     $("#alternatives_content").html e.responseText
   
   $(".alt-edit").bind "ajax:complete", (et, e) ->
-    showAlternativesContentArea()
+    tc.showAlternativesContentArea()
     $("#alternatives_content").html e.responseText
-    bindCreateNewAlternativeAction id
+    tc.bindCreateNewAlternativeAction id
   
   $(".alt-reject").bind "ajax:complete", (et, e) ->
-    getActiveAlternatives id
-    getRejectedAlternatives id
+    tc.getActiveAlternatives id
+    tc.getRejectedAlternatives id
     
-  altActivePagination id
+  tc.altActivePagination id
 
-bindRejectedAlternativesLinks = (id, resp) ->
+window.tc.bindRejectedAlternativesLinks = (id, resp) ->
   $("#prob_rejected_alts").html resp
   $(".alt-active").bind "ajax:complete", (et, e) ->
-    getActiveAlternatives id
-    getRejectedAlternatives id
-  altRejectedPagination id
+    tc.getActiveAlternatives id
+    tc.getRejectedAlternatives id
+  tc.altRejectedPagination id
   
-createNewAlternative = (id) ->
+window.tc.createNewAlternative = (id) ->
   $.ajax
     url: '/problems/' + id + '/alternatives/new'
     type: "get"
     success: (resp) ->
       $("#alternatives_content").html resp
-      bindCreateNewAlternativeAction id
+      tc.bindCreateNewAlternativeAction id
     error: (xhr, ajaxOptions, thrownError)->
       alert(thrownError)
     cache: false
 
-bindCreateNewAlternativeAction = (id) ->
+window.tc.bindCreateNewAlternativeAction = (id) ->
   $(".alt-form").bind "ajax:complete", (et, e) ->
     res = e.responseText
     if($.isNumeric( res ))
@@ -102,27 +121,27 @@ bindCreateNewAlternativeAction = (id) ->
         error: (xhr, ajaxOptions, thrownError)->
           alert(thrownError)
         cache: false
-      getActiveAlternatives id
+      tc.getActiveAlternatives id
     else
       $("#alternatives_content").html res
-      bindCreateNewAlternativeAction id
+      tc.bindCreateNewAlternativeAction id
 
-showAlternativesContentArea = ->
+window.tc.showAlternativesContentArea = ->
   if(!$("#alternatives_content").hasClass("in"))
     $("#alternatives_content").collapse('show')
     $("#alternatives_content_switch").html '<i class="icon-chevron-up"></i>'
 
-hideAlternativesContentArea = ->
+window.tc.hideAlternativesContentArea = ->
   if($("#alternatives_content").hasClass("in"))
     $("#alternatives_content").collapse('hide')
     $("#alternatives_content_switch").html '<i class="icon-chevron-down"></i>'
 
-bindCreateAlternative = (id) ->
+window.tc.bindCreateAlternative = (id) ->
   $("#create_new_alternative").on "click", ->
-    createNewAlternative id
-    showAlternativesContentArea()
+    tc.createNewAlternative id
+    tc.showAlternativesContentArea()
 
-altActivePagination = (id) ->
+window.tc.altActivePagination = (id) ->
   if($(".alt-active-pagination").length > 0)
     $(".alt-active-pagination").addClass "pagination-centered"
     $('.alt-active-pagination a').attr("data-remote", "true")
@@ -132,9 +151,9 @@ altActivePagination = (id) ->
     $('.alt-active-pagination li').wrapAll "<ul />"
     $('.alt-active-pagination a').bind "ajax:complete", (et, e) ->
       resp = e.responseText
-      bindActiveAlternativesLinks id, resp
+      tc.bindActiveAlternativesLinks id, resp
 
-altRejectedPagination = (id) ->
+window.tc.altRejectedPagination = (id) ->
   if($(".alt-rejected-pagination").length > 0)
     $(".alt-rejected-pagination").addClass "pagination-centered"
     $('.alt-rejected-pagination a').attr("data-remote", "true")
@@ -144,69 +163,69 @@ altRejectedPagination = (id) ->
     $('.alt-rejected-pagination li').wrapAll "<ul />"
     $('.alt-rejected-pagination a').bind "ajax:complete", (et, e) ->
       resp = e.responseText
-      bindRejectedAlternativesLinks id, resp
+      tc.bindRejectedAlternativesLinks id, resp
       
 ## ----------------
 ## Criteria Methods
 ## ----------------
 
-getActiveCriteria = (id) ->
+window.tc.getActiveCriteria = (id) ->
   $.ajax
     url: '/problems/' + id + '/criteria'
     type: "get"
     success: (resp) ->
-      bindActiveCriteriaLinks id, resp
+      tc.bindActiveCriteriaLinks id, resp
     error: (xhr, ajaxOptions, thrownError)->
       alert(thrownError)
     cache: false
 
-getRejectedCriteria = (id) ->
+window.tc.getRejectedCriteria = (id) ->
   $.ajax
     url: '/problems/' + id + '/criteria/rejected'
     type: "get"
     success: (resp) ->
-      bindRejectedCriteriaLinks id, resp
+      tc.bindRejectedCriteriaLinks id, resp
     error: (xhr, ajaxOptions, thrownError)->
       alert(thrownError)
     cache: false
 
-bindActiveCriteriaLinks = (id, resp) ->
+window.tc.bindActiveCriteriaLinks = (id, resp) ->
   $("#prob_active_criteria").html resp
   
   $(".criteria-details").bind "ajax:complete", (et, e) ->
-    showCriteriaContentArea()
+    tc.showCriteriaContentArea()
     $("#criteria_content").html e.responseText
   
   $(".criteria-edit").bind "ajax:complete", (et, e) ->
-    showCriteriaContentArea()
+    tc.showCriteriaContentArea()
     $("#criteria_content").html e.responseText
-    bindCreateNewCriteriaAction id
+    tc.bindCreateNewCriteriaAction id
   
   $(".criteria-reject").bind "ajax:complete", (et, e) ->
-    getActiveCriteria id
-    getRejectedCriteria id
+    tc.getActiveCriteria id
+    tc.getRejectedCriteria id
     
-  criteriaActivePagination id
+  tc.criteriaActivePagination id
 
-bindRejectedCriteriaLinks = (id, resp) ->
+window.tc.bindRejectedCriteriaLinks = (id, resp) ->
   $("#prob_rejected_criteria").html resp
   $(".criteria-active").bind "ajax:complete", (et, e) ->
-    getActiveCriteria id
-    getRejectedCriteria id
-  criteriaRejectedPagination id
+    tc.getActiveCriteria id
+    tc.getRejectedCriteria id
+  tc.criteriaRejectedPagination id
 
-createNewCriteria = (id) ->
+window.tc.createNewCriteria = (id) ->
   $.ajax
     url: '/problems/' + id + '/criteria/new'
     type: "get"
     success: (resp) ->
       $("#criteria_content").html resp
-      bindCreateNewCriteriaAction id
+      tc.bindCreateNewCriteriaAction id
     error: (xhr, ajaxOptions, thrownError)->
       alert(thrownError)
     cache: false
 
-bindCreateNewCriteriaAction = (id) ->
+window.tc.bindCreateNewCriteriaAction = (id) ->
   $(".criteria-form").bind "ajax:complete", (et, e) ->
     res = e.responseText
     if($.isNumeric( res ))
@@ -218,27 +237,27 @@ bindCreateNewCriteriaAction = (id) ->
         error: (xhr, ajaxOptions, thrownError)->
           alert(thrownError)
         cache: false
-      getActiveCriteria id
+      tc.getActiveCriteria id
     else
       $("#criteria_content").html res
-      bindCreateNewCriteriaAction id
+      tc.bindCreateNewCriteriaAction id
 
-showCriteriaContentArea = ->
+window.tc.showCriteriaContentArea = ->
   if(!$("#criteria_content").hasClass("in"))
     $("#criteria_content").collapse('show')
     $("#criteria_content_switch").html '<i class="icon-chevron-up"></i>'
 
-hideCriteriaContentArea = ->
+window.tc.hideCriteriaContentArea = ->
   if($("#criteria_content").hasClass("in"))
     $("#criteria_content").collapse('hide')
     $("#criteria_content_switch").html '<i class="icon-chevron-down"></i>'
 
-bindCreateCriteria = (id) ->
+window.tc.bindCreateCriteria = (id) ->
   $("#create_new_criteria").on "click", ->
-    createNewCriteria id
-    showCriteriaContentArea()
+    tc.createNewCriteria id
+    tc.showCriteriaContentArea()
 
-criteriaActivePagination = (id) ->
+window.tc.criteriaActivePagination = (id) ->
   if($(".criteria-active-pagination").length > 0)
     $(".criteria-active-pagination").addClass "pagination-centered"
     $('.criteria-active-pagination a').attr("data-remote", "true")
@@ -248,9 +267,9 @@ criteriaActivePagination = (id) ->
     $('.criteria-active-pagination li').wrapAll "<ul />"
     $('.criteria-active-pagination a').bind "ajax:complete", (et, e) ->
       resp = e.responseText
-      bindActiveCriteriaLinks id, resp
+      tc.bindActiveCriteriaLinks id, resp
 
-criteriaRejectedPagination = (id) ->
+window.tc.criteriaRejectedPagination = (id) ->
   if($(".criteria-rejected-pagination").length > 0)
     $(".criteria-rejected-pagination").addClass "pagination-centered"
     $('.criteria-rejected-pagination a').attr("data-remote", "true")
@@ -260,4 +279,97 @@ criteriaRejectedPagination = (id) ->
     $('.criteria-rejected-pagination li').wrapAll "<ul />"
     $('.criteria-rejected-pagination a').bind "ajax:complete", (et, e) ->
       resp = e.responseText
-      bindRejectedCriteriaLinks id, resp
+      tc.bindRejectedCriteriaLinks id, resp
+
+## ---------------
+## Problem Methods
+## ---------------
+
+window.tc.bindCreateNewProblem = ->
+  $("#create_new_problem").on "click", ->
+    tc.createNewProblem()
+
+window.tc.createNewProblem = ->
+  $.ajax
+    url: '/problems/new'
+    type: "get"
+    success: (resp) ->
+      $("#problem_details").hide()
+      $("#new_problem").show()
+      
+      $("#new_problem").html resp
+      tc.bindCreateNewProblemAction()
+    error: (xhr, ajaxOptions, thrownError)->
+      alert(thrownError)
+    cache: false
+
+window.tc.bindCreateNewProblemAction = ->
+  $(".problem-form").bind "ajax:complete", (et, e) ->
+    id = e.responseText
+    if($.isNumeric( id ))
+      $.ajax
+        url: '/problems/'+id
+        type: "get"
+        success: (resp) ->
+          tc.showProblemDetails(id, resp)
+        error: (xhr, ajaxOptions, thrownError)->
+          alert(thrownError)
+        cache: false
+    else
+      $("#new_problem").html res
+      tc.bindCreateNewProblemAction()
+
+window.tc.bindActiveProblemAction = ->
+  $(".problem-activate").bind "ajax:complete", (et, e) ->
+    tc.getProblems("pending")
+    tc.getProblems("active")
+    id = e.responseText
+    if($.isNumeric( id ))
+      $.ajax
+        url: '/problems/'+id
+        type: "get"
+        success: (resp) ->
+          tc.showProblemDetails(id, resp)
+        error: (xhr, ajaxOptions, thrownError)->
+          alert(thrownError)
+        cache: false
+    else
+      alert("Sorry, something went wrong, please contact admin for helping.")
+
+window.tc.bindCloseProblemAction = ->
+  $(".problem-close").bind "ajax:complete", (et, e) ->
+    tc.getProblems("active")
+    tc.getProblems("closed")
+    id = e.responseText
+    if($.isNumeric( id ))
+      $.ajax
+        url: '/problems/'+id
+        type: "get"
+        success: (resp) ->
+          tc.showProblemDetails(id, resp)
+        error: (xhr, ajaxOptions, thrownError)->
+          alert(thrownError)
+        cache: false
+    else
+      alert("Sorry, something went wrong, please contact admin for helping.")
+
+window.tc.bindEditProblemAction = ->
+  $(".problem-edit").bind "ajax:complete", (et, e) ->
+    $("#prob_desc").html e.responseText
+    tc.bindUpdateProblemAction()
+
+window.tc.bindUpdateProblemAction = ->
+  $(".problem-form").bind "ajax:complete", (et, e) ->
+    id = e.responseText
+    if($.isNumeric( id ))
+      $.ajax
+        url: '/problems/'+id
+        type: "get"
+        success: (resp) ->
+          tc.showProblemDetails(id, resp)
+        error: (xhr, ajaxOptions, thrownError)->
+          alert(thrownError)
+        cache: false
+    else
+      $("#prob_desc").html id
+      tc.bindUpdateProblemAction()

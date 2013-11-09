@@ -1,34 +1,31 @@
-<div class="row">
-	<div class="span12">
-		<%= form_for @problem, html: {class: "form-horizontal pull-left"} do |f| %>
-			<% if @problem.errors.any? %>
-				<div id="error_explanation">
-					<h2><%= pluralize(@problem.errors.count, "error") %> prohibited this problem from being saved:</h2>
-					<ul>
-						<% @problem.errors.full_messages.each do |msg| %>
-						<li><%= msg %></li>
-						<% end %>
-					</ul>
-				</div>
-			<% end %>
-		
-			<div class="control-group">
-				<%= f.label :name, class: "control-label", for: "problem_name"%>
-				<div class="controls">
-					<%= f.text_field :name, class: "input-xlarge", required: "required" %>
-				</div>
-			</div>
-		 	
-		 	<div class="control-group">
-				<%= f.label "Description", class: "control-label", for: "problem_desc" %>
-				<div class="controls">
-					<%= f.text_area :desc, class: "input-xxlarge", required: "required", row: 10 %>
-				</div>
-			</div>
-			
-			<div class="actions controls">
-		    	<%= f.submit "Create", class: "btn btn-primary" %>
-			</div>
-		<% end %>
+<%= form_for @problem, :remote => true, html: {class: "form-horizontal pull-left problem-form"} do |f| %>
+	<% if @problem.errors.any? %>
+		<div id="error_explanation">
+			<h4><%= pluralize(@problem.errors.count, "error") %> prohibited this problem from being saved:</h4>
+			<ul>
+				<% @problem.errors.full_messages.each do |msg| %>
+				<li><%= msg %></li>
+				<% end %>
+			</ul>
+		</div>
+	<% end %>
+
+	<div class="control-group">
+		<%= f.label :name, class: "control-label", for: "problem_name"%>
+		<div class="controls">
+			<%= f.text_field :name, class: "input-xlarge", required: "required" %>
+		</div>
 	</div>
-</div>
+ 	
+ 	<div class="control-group">
+		<%= f.label "Description", class: "control-label", for: "problem_desc" %>
+		<div class="controls">
+			<%= f.text_area :desc, class: "input-xxlarge", required: "required", row: 10 %>
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="actions controls">
+	    	<%= f.submit @problem.new_record? ? "Create Problem" : "Update Problem", :id => "create_problem", :class => "btn btn-primary" %>
+		</div>
+	</div>
+<% end %>

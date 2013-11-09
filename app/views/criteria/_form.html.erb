@@ -1,7 +1,7 @@
 <%= form_for([@problem, @criterium], :remote => true, html: {class: "form-horizontal criteria-form"}) do |f| %>
   <% if @criterium.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@criterium.errors.count, "error") %> prohibited this criterium from being saved:</h2>
+      <h4><%= pluralize(@criterium.errors.count, "error") %> prohibited this criterium from being saved:</h4>
 
       <ul>
       <% @criterium.errors.full_messages.each do |msg| %>
@@ -14,14 +14,14 @@
   <div class="control-group">
 		<%= f.label :name, :class => "control-label" %>
 	    <div class="controls">
-	    	<%= f.text_field :name %>
+	    	<%= f.text_field :name, class: "input-xlarge", required: "required" %>
 	    </div>
   </div>
 
   <div class="control-group">
 		<%= f.label :desc, :class => "control-label" %>
 		<div class="controls">
-			<%= f.text_area :desc %>
+			<%= f.text_area :desc, class: "input-xxlarge", required: "required", row: 10 %>
 		</div>
   </div>
   

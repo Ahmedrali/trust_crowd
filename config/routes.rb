@@ -1,6 +1,10 @@
 TrustCrowd::Application.routes.draw do
 
   resources :problems do
+    get :active,    :on => :member
+    get :close,     :on => :member
+    get :search,    :on => :collection
+    get :participate,     :on => :member
     resources :alternatives do
       get :rejected, :on => :collection
       get :active,   :on => :member
