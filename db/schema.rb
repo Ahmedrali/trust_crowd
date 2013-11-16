@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131103140513) do
+ActiveRecord::Schema.define(version: 20131116074514) do
 
   create_table "alternatives", force: true do |t|
     t.string   "name"
@@ -21,7 +21,8 @@ ActiveRecord::Schema.define(version: 20131103140513) do
     t.integer  "problem_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "reject",     default: false
+    t.boolean  "reject",                  default: false
+    t.integer  "last_tweet_id", limit: 8
   end
 
   add_index "alternatives", ["problem_id"], name: "index_alternatives_on_problem_id"
@@ -36,7 +37,8 @@ ActiveRecord::Schema.define(version: 20131103140513) do
     t.decimal  "weight"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "reject",              default: false
+    t.boolean  "reject",                        default: false
+    t.integer  "last_tweet_id",       limit: 8
   end
 
   add_index "criteria", ["problem_id"], name: "index_criteria_on_problem_id"
@@ -66,7 +68,22 @@ ActiveRecord::Schema.define(version: 20131103140513) do
     t.string   "status"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "last_tweet_id", limit: 8
   end
+
+  create_table "tweets", force: true do |t|
+    t.integer  "problem_id"
+    t.integer  "tweet_id",      limit: 8
+    t.string   "tw_hash"
+    t.integer  "retweet_count"
+    t.string   "text"
+    t.float    "polarity"
+    t.datetime "created_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "tweets", ["problem_id"], name: "index_tweets_on_problem_id"
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false

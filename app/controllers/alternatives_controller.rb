@@ -33,6 +33,7 @@ class AlternativesController < ApplicationController
   # POST /problems/:problem_id/alternatives
   def create
     @alternative = @problem.alternatives.new(alternative_params)
+    @alternative.tw_hash  = "#{@problem.tw_hash_}_a#{@problem.alternatives.count}"
     if @alternative.save
       render text: @alternative.id, layout: false
     else
@@ -76,6 +77,6 @@ class AlternativesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def alternative_params
-      params.require(:alternative).permit(:name, :desc, :tw_hash, :problem_id)
+      params.require(:alternative).permit(:name, :desc, :problem_id)
     end
 end

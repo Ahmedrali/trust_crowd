@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  tweet_id: 1
+  hashtag: MyString
+  text: MyString
+  polarity: 1.5
+  created_date: 2013-11-16 08:43:44
+  retweet_count: 1
+
+two:
+  tweet_id: 1
+  hashtag: MyString
+  text: MyString
+  polarity: 1.5
+  created_date: 2013-11-16 08:43:44
+  retweet_count: 1

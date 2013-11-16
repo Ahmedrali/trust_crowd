@@ -4,6 +4,7 @@ class Problem < ActiveRecord::Base
   has_many  :users, :through => :users_problems
   has_many  :alternatives
   has_many  :criteria
+  has_many  :tweets
   
   validates :name, uniqueness: true
   validates :name, :desc, presence: true
@@ -12,6 +13,8 @@ class Problem < ActiveRecord::Base
   ACTIVE  = "active"
   CLOSED  = "closed"
   STATUS  = [PENDING, ACTIVE, CLOSED]
+  
+  scope :active, where(:status => ACTIVE)
   
   def activate
     self.status = ACTIVE
