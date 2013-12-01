@@ -21,3 +21,7 @@
 
 en:
   hello: "Hello world"
+  mat_not_square: "The matrix is not square"
+  err_msg: "Sorry, something went wrong '%{msg}', please contact 'ahmedrali2@gmail.com'"
+  reevaluate: "Sorry your evaluation is not consistent, Reevaluate again, please."
+  success_save_evaluation: "Your evaluation was successfully saved."

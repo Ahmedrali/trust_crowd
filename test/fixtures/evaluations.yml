@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user: 
+  criteria: 
+  alternatives_matrix: MyText
+  alternatives_value: MyText
+
+two:
+  user: 
+  criteria: 
+  alternatives_matrix: MyText
+  alternatives_value: MyText

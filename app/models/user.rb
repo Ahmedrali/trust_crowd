@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   
   has_many  :users_problems
   has_many  :problems, :through => :users_problems
+  has_many  :evaluations
   
   def self.find_for_twitter(auth, signed_in_resource=nil)
     tw_id       = auth["uid"]

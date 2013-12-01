@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131116074514) do
+ActiveRecord::Schema.define(version: 20131129074419) do
 
   create_table "alternatives", force: true do |t|
     t.string   "name"
@@ -32,16 +32,23 @@ ActiveRecord::Schema.define(version: 20131116074514) do
     t.text     "desc"
     t.string   "tw_hash"
     t.integer  "problem_id"
-    t.text     "alternatives_matrix"
-    t.text     "alternatives_value"
     t.decimal  "weight"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "reject",                        default: false
-    t.integer  "last_tweet_id",       limit: 8
+    t.boolean  "reject",                  default: false
+    t.integer  "last_tweet_id", limit: 8
   end
 
   add_index "criteria", ["problem_id"], name: "index_criteria_on_problem_id"
+
+  create_table "evaluations", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "criteria_id"
+    t.text     "alternatives_matrix"
+    t.text     "alternatives_value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "installs", force: true do |t|
     t.string   "email",                  default: "", null: false
@@ -68,7 +75,8 @@ ActiveRecord::Schema.define(version: 20131116074514) do
     t.string   "status"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "last_tweet_id", limit: 8
+    t.integer  "last_tweet_id",   limit: 8
+    t.text     "criteria_matrix"
   end
 
   create_table "tweets", force: true do |t|

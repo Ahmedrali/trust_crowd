@@ -1,5 +1,5 @@
 class CriteriaController < ApplicationController
-  before_action :set_criterium, only: [:show, :edit, :update, :destroy, :active]
+  before_action :set_criterium, only: [:show, :edit, :update, :destroy, :active, :ranking, :save_evaluation]
   before_action :set_problem
   
   # GET /problems/:problem_id/criteria
@@ -33,7 +33,7 @@ class CriteriaController < ApplicationController
   # POST /problems/:problem_id/criteria
   def create
     @criterium = @problem.criteria.new(criterium_params)
-    @criterium.tw_hash  = "#{@problem.tw_hash_}_c#{@problem.criteria.count}"
+    @criterium.tw_hash  = "#{@problem.tw_hash}_c#{@problem.criteria.count}"
     if @criterium.save
       render text: @criterium.id, layout: false
     else
@@ -61,7 +61,6 @@ class CriteriaController < ApplicationController
   def active
     @criterium.reject = false
     @criterium.save
-    render text: "ok", layout: false
   end
 
   private
@@ -77,6 +76,6 @@ class CriteriaController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def criterium_params
-      params.require(:criterium).permit(:name, :desc, :problem_id, :alternatives_matrix, :alternatives_value, :weight)
+      params.require(:criterium).permit(:name, :desc, :problem_id, :weight)
     end
 end

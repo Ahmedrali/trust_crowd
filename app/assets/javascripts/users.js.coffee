@@ -14,10 +14,12 @@ window.tc.getProblems = (status) ->
 
 window.tc.showProblemDetails = (id, prob_desc) ->
   $("#problem_details").show()
+  $("#ahp_evaluation").hide()
   $("#new_problem").hide()
   $("#alternatives_content").html '<p class="text-center"> ... </p>'
   $("#criteria_content").html '<p class="text-center"> ... </p>'
   $("#prob_desc").html prob_desc
+  tc.bindEvaluateAction()
   tc.bindEditProblemAction()
   tc.bindActiveProblemAction()
   tc.bindCloseProblemAction()
@@ -352,6 +354,28 @@ window.tc.bindCloseProblemAction = ->
         cache: false
     else
       alert("Sorry, something went wrong, please contact admin for helping.")
+
+window.tc.bindEvaluateAction = ->
+  $(".problem-evaluate").bind "ajax:complete", (et, e) ->
+    $("#problem_details").hide()
+    $("#ahp_evaluation").show()
+    $("#ahp_evaluation").html e.responseText
+    tc.bindFinishEvaluateAction()
+
+window.tc.bindFinishEvaluateAction = ->
+  $(".problem-finish-evaluate").bind "ajax:complete", (et, e) ->
+    id = e.responseText
+    if($.isNumeric( id ))
+      $.ajax
+        url: '/problems/'+id
+        type: "get"
+        success: (resp) ->
+          tc.showProblemDetails(id, resp)
+        error: (xhr, ajaxOptions, thrownError)->
+          alert(thrownError)
+        cache: false
+    else
+      alert(id)
 
 window.tc.bindEditProblemAction = ->
   $(".problem-edit").bind "ajax:complete", (et, e) ->

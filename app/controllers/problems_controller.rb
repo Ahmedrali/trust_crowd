@@ -1,5 +1,5 @@
 class ProblemsController < ApplicationController
-  before_action :set_problem, only: [:show, :edit, :update, :destroy, :active, :close, :participate]
+  before_action :set_problem, only: [:show, :edit, :update, :destroy, :active, :close, :participate, :evaluate, :finish_evaluation, :ranking]
   # GET /problems
   # GET /problems.json
   def index
@@ -69,8 +69,13 @@ class ProblemsController < ApplicationController
 
   # GET /problems/1/active
   def active
-    if @problem.activate
-      render text: @problem.id, layout: false
+    Problem.transaction do
+      if @problem.activate
+        if @problem.criteria.first.weight.nil? or @problem.criteria.first.weight.empty?
+          @problem.criteria.update_all(:weight => (1/Float(@problem.criteria.count)))
+        end
+        render text: @problem.id, layout: false
+      end
     end
   end
   
@@ -88,6 +93,24 @@ class ProblemsController < ApplicationController
       redirect_to root_path, :notice => "Successfully participated."
     end
   end
+  
+  def ranking
+    criteria = @problem.criteria
+    criteria_weights      = Matrix.rows([ criteria.map{|c| c.weight.to_f} ]).transpose
+    criteria_evaluations  = Matrix.rows( criteria.map{|c| JSON.parse(c.alternatives_value)} ).transpose
+    @alternative_weights  = criteria_evaluations * criteria_weights
+    @alternatives         = @problem.alternatives
+  end
+  
+  def evaluate
+    @criteria = @problem.criteria
+    render layout: false
+  end
+  
+  def finish_evaluation
+    render text: @problem.id, layout: false
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_problem

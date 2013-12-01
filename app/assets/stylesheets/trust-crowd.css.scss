@@ -58,3 +58,42 @@ $border_radius_large:   30px;
 .form-horizontal .control-group textarea{
   height: 100px !important;
 }
+
+#alt_comparison > table{
+  width: 80% !important;
+  font-size: 20px;
+}
+
+#alt_comparison tr {
+    border-bottom: 1px dotted #C0C0C0;
+    box-shadow: 0 2px 0 0 #CCCCCC;
+    height: 60px;
+    vertical-align: bottom;
+}
+
+.alt-src {
+    vertical-align: bottom !important;
+    text-align: left !important;
+    width: 25%;
+}
+
+.alt-val {
+    vertical-align: bottom !important;
+    text-align: center !important;
+}
+
+.alt-trg {
+    vertical-align: bottom !important;
+    text-align: right !important;
+    width: 25%;
+}
+
+.sliders-vals{
+  vertical-align: super !important;
+}
+
+.eval-numbers{
+  width: 20px;
+  text-align: center !important;
+  vertical-align: bottom !important;
+}

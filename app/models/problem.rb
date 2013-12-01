@@ -1,5 +1,7 @@
 class Problem < ActiveRecord::Base
   
+  serialize :criteria_matrix
+  
   has_many  :users_problems
   has_many  :users, :through => :users_problems
   has_many  :alternatives

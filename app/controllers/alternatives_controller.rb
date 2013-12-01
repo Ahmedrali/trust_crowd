@@ -33,7 +33,7 @@ class AlternativesController < ApplicationController
   # POST /problems/:problem_id/alternatives
   def create
     @alternative = @problem.alternatives.new(alternative_params)
-    @alternative.tw_hash  = "#{@problem.tw_hash_}_a#{@problem.alternatives.count}"
+    @alternative.tw_hash  = "#{@problem.tw_hash}_a#{@problem.alternatives.count}"
     if @alternative.save
       render text: @alternative.id, layout: false
     else

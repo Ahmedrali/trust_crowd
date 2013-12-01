@@ -1,0 +1,96 @@
+<div id="evaluation_criteria">
+	Select Criteria To evaluate:
+	<select id="criteria_list" class="input-small">
+		<% selected = "" %>
+		<% @criteria.each do |criteria| %>
+			<option value="<%= criteria.id %>" <%= criteria.name == @selected ? "SELECTED" : "" %> > <%= criteria.name %> </option>
+		<% end %>
+	</select>
+</div>
+
+<div id="alt_comparison" align="center">
+	<div id="evaluation_div">
+		
+	</div>
+	<div id="save_evaluation_btn" class="float-left">
+		<%= link_to 'Save', "javascript:saveEvaluation();", :class => "btn btn-primary problem-save-evaluate" %>
+	</div>
+</div>
+
+<div class="float-left">
+	<%= link_to 'Finish Evaluate', finish_evaluation_problem_path(@problem), :class => "btn btn-primary problem-finish-evaluate", :remote => true %>
+</div>
+
+<script type="text/javascript">
+	$(function(){
+		get_criteria_evaluation_matrix();
+	});
+	
+	function get_criteria_evaluation_matrix(){
+		url = "/problems/" + <%= @problem.id %> + "/criteria/" + $("#criteria_list option:selected").val() + "/evaluations/get"
+		$.ajax({
+			      type: "GET",
+			      url: url,
+			      dataType: "script",
+			      success: function(){
+			        init_sliders();
+		          }
+			  });
+	}
+	
+	function init_sliders() {
+		$.each($(".sliders"), function(i, val){
+			slider = $("#"+val.id)
+			v = parseFloat(slider.data()["val"]);
+			$( "#"+this.id+"-val" ).data("actual_value", v);
+			if(v < 1){
+				v = (1 / v)
+				v -= 1;
+			}else{
+				v *= -1;
+				v += 1;
+			}
+			slider.slider({
+				min: -8,
+				max: 8,
+				step: 2,
+				value: v,
+				slide: function( event, ui ) {
+					value = ui.value
+					if (value > 0){
+						actual_value = 1 / (value+1) 
+						$( "#"+this.id+"-val" ).data("actual_value", actual_value);
+					}else if(value < 0 ){
+						value *= -1;
+						$( "#"+this.id+"-val" ).data("actual_value", value+1);
+					}else if(value == 0){
+						$( "#"+this.id+"-val" ).data("actual_value", value+1);
+					}
+					value += 1;
+					$( "#"+this.id+"-val" ).html( parseInt(value) );
+				}
+			});
+		});
+	};
+	
+	$("#criteria_list").change(function() {
+		get_criteria_evaluation_matrix();
+	});
+	
+	function saveEvaluation(){
+		values = {}
+		$(".sliders-vals").each(function(i) {
+			values[this.id] =  $("#"+this.id).data()["actual_value"];
+		});
+		url = "/problems/" + <%= @problem.id %> + "/criteria/" + $("#criteria_list option:selected").val() + "/evaluations/save"
+		$.ajax({
+			      type: "POST",
+			      url: url,
+			      data: {'matrix': values},
+			      success: function(resp){
+			      	get_criteria_evaluation_matrix();
+			      	alert(resp);
+			      }
+			  });
+	}
+</script>
