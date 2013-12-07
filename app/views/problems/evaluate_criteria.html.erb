@@ -24,7 +24,7 @@
 	});
 	
 	function get_criteria_evaluation_matrix(){
-		url = "/problems/" + <%= @problem.id %> + "/criteria/" + $("#criteria_list option:selected").val() + "/evaluations/get"
+		url = "/problems/" + <%= @problem.id %> + "/criteria/" + $("#criteria_list option:selected").val() + "/criteria_evaluations/get"
 		$.ajax({
 			      type: "GET",
 			      url: url,
@@ -79,7 +79,7 @@
 		$(".sliders-vals").each(function(i) {
 			values[this.id] =  $("#"+this.id).data()["actual_value"];
 		});
-		url = "/problems/" + <%= @problem.id %> + "/criteria/" + $("#criteria_list option:selected").val() + "/evaluations/save"
+		url = "/problems/" + <%= @problem.id %> + "/criteria/" + $("#criteria_list option:selected").val() + "/criteria_evaluations/save"
 		$.ajax({
 			      type: "POST",
 			      url: url,

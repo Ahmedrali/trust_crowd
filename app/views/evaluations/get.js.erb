@@ -1,1 +1,5 @@
-$("#alt_comparison #evaluation_div").html("<%= escape_javascript(render 'evaluation') %>");
+if(<%= @hasSubcriteria %>){
+	$("#alt_comparison #evaluation_div").html("Please, select one of its sub-criteria to evaluate.");
+}else{
+	$("#alt_comparison #evaluation_div").html("<%= escape_javascript(render 'evaluation') %>");
+}

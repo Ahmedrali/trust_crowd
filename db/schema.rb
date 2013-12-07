@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131129074419) do
+ActiveRecord::Schema.define(version: 20131207062903) do
 
   create_table "alternatives", force: true do |t|
     t.string   "name"
@@ -37,9 +37,24 @@ ActiveRecord::Schema.define(version: 20131129074419) do
     t.datetime "updated_at"
     t.boolean  "reject",                  default: false
     t.integer  "last_tweet_id", limit: 8
+    t.integer  "parent_id",               default: -1
   end
 
   add_index "criteria", ["problem_id"], name: "index_criteria_on_problem_id"
+
+  create_table "criteria_evaluations", force: true do |t|
+    t.integer  "problem_id"
+    t.integer  "criterium_id"
+    t.integer  "user_id"
+    t.text     "criteria_matrix"
+    t.text     "criteria_value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "criteria_evaluations", ["criterium_id"], name: "index_criteria_evaluations_on_criterium_id"
+  add_index "criteria_evaluations", ["problem_id"], name: "index_criteria_evaluations_on_problem_id"
+  add_index "criteria_evaluations", ["user_id"], name: "index_criteria_evaluations_on_user_id"
 
   create_table "evaluations", force: true do |t|
     t.integer  "user_id"

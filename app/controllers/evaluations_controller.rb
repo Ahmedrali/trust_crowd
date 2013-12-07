@@ -4,12 +4,13 @@ class EvaluationsController < ApplicationController
   before_action :set_evaluation
 
   def get
-    unless @evaluation
+    @hasSubcriteria = @criterium.hasSubcriteria?
+    unless @evaluation and JSON.parse(@evaluation.alternatives_value).count == @problem.alternatives.count
       evaluation = init_problem_criteria_evaluation
       mat = getMatrix(@problem.alternatives.count, evaluation)
       weights = checkConsistency(mat)
       if weights.class == Array
-        @evaluation = Evaluation.new
+        @evaluation = Evaluation.new unless @evaluation 
         @evaluation.criteria_id = @criterium.id
         @evaluation.user_id = current_user.id
         @evaluation.alternatives_value = weights.to_json
@@ -60,11 +61,11 @@ class EvaluationsController < ApplicationController
     def init_problem_criteria_evaluation
       alternatives = @problem.alternatives
       evaluation = {}
-      @problem.alternatives.each do |src|
-        unless evaluation.include?(src.name) or @problem.alternatives.last == src
+      alternatives.each do |src|
+        unless evaluation.include?(src.name) or alternatives.last == src
           evaluation[src.name] = {}
         end
-        @problem.alternatives.each do |trg|
+        alternatives.each do |trg|
           if trg.id > src.id
             evaluation[src.name].merge!({trg.name => 1})
           end

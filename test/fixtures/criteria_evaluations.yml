@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  problem_id: 
+  criterium_id: 
+  user_id: 
+  criteria_matrix: MyText
+  criteria_value: MyText
+
+two:
+  problem_id: 
+  criterium_id: 
+  user_id: 
+  criteria_matrix: MyText
+  criteria_value: MyText

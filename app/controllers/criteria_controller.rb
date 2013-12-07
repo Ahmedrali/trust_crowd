@@ -61,6 +61,7 @@ class CriteriaController < ApplicationController
   def active
     @criterium.reject = false
     @criterium.save
+    render text: "ok", layout: false
   end
 
   private
@@ -76,6 +77,6 @@ class CriteriaController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def criterium_params
-      params.require(:criterium).permit(:name, :desc, :problem_id, :weight)
+      params.require(:criterium).permit(:name, :desc, :problem_id, :weight, :parent_id)
     end
 end

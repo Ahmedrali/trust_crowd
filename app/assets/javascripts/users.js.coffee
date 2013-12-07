@@ -20,6 +20,7 @@ window.tc.showProblemDetails = (id, prob_desc) ->
   $("#criteria_content").html '<p class="text-center"> ... </p>'
   $("#prob_desc").html prob_desc
   tc.bindEvaluateAction()
+  tc.bindEvaluateCriteriaAction()
   tc.bindEditProblemAction()
   tc.bindActiveProblemAction()
   tc.bindCloseProblemAction()
@@ -357,6 +358,13 @@ window.tc.bindCloseProblemAction = ->
 
 window.tc.bindEvaluateAction = ->
   $(".problem-evaluate").bind "ajax:complete", (et, e) ->
+    $("#problem_details").hide()
+    $("#ahp_evaluation").show()
+    $("#ahp_evaluation").html e.responseText
+    tc.bindFinishEvaluateAction()
+
+window.tc.bindEvaluateCriteriaAction = ->
+  $(".problem-evaluate-criteria").bind "ajax:complete", (et, e) ->
     $("#problem_details").hide()
     $("#ahp_evaluation").show()
     $("#ahp_evaluation").html e.responseText

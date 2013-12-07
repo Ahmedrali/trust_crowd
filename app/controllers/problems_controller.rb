@@ -1,5 +1,5 @@
 class ProblemsController < ApplicationController
-  before_action :set_problem, only: [:show, :edit, :update, :destroy, :active, :close, :participate, :evaluate, :finish_evaluation, :ranking]
+  before_action :set_problem, only: [:show, :edit, :update, :destroy, :active, :close, :participate, :evaluate, :evaluate_criteria, :finish_evaluation, :ranking]
   # GET /problems
   # GET /problems.json
   def index
@@ -103,7 +103,12 @@ class ProblemsController < ApplicationController
   end
   
   def evaluate
-    @criteria = @problem.criteria
+    @criteria = @problem.getParentSubCriteriaForEvaluation
+    render layout: false
+  end
+  
+  def evaluate_criteria
+    @criteria = [["All Criteria", -1]].concat(@problem.parentCriteria)
     render layout: false
   end
   

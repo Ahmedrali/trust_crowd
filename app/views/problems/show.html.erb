@@ -16,5 +16,6 @@
 
 <% if @problem.active? %>
 	<%= link_to 'Close the problem', close_problem_path(@problem), :class => "btn btn-primary problem-close", :remote => true, data: { confirm: 'Are you sure?' } %>
-	<%= link_to 'Evaluate', evaluate_problem_path(@problem), :class => "btn btn-primary problem-evaluate", :remote => true %>
+	<%= link_to 'Evaluate Criteria', evaluate_criteria_problem_path(@problem), :class => "btn btn-primary problem-evaluate-criteria", :remote => true %>
+	<%= link_to 'Evaluate Alternatives', evaluate_problem_path(@problem), :class => "btn btn-primary problem-evaluate", :remote => true %>
 <% end %>
