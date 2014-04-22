@@ -37,7 +37,7 @@ class Problem < ActiveRecord::Base
   end
   
   def subcriteriaOf(parent_id)
-    self.criteria.where(:parent_id => parent_id)
+    self.criteria.where(:reject => false, :parent_id => parent_id)
   end
   
   def parentCriteria
@@ -49,6 +49,7 @@ class Problem < ActiveRecord::Base
     self.criteria.active.each do |criterium|
       criteria.include?(criterium.parent_id) ? criteria[criterium.parent_id].append([criterium.name, criterium.id]) : (criteria[criterium.parent_id] = [[criterium.name, criterium.id]])
     end
+    puts criteria
     buildTree(criteria)
   end
   

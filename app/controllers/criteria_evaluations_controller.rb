@@ -4,7 +4,7 @@ class CriteriaEvaluationsController < ApplicationController
   before_action :set_evaluation
 
   def get
-    unless @evaluation and JSON.parse(@evaluation.criteria_value).count == @problem.subcriteriaOf(@parent_criterium).count
+    unless @evaluation and (@evaluation.criteria_value).count == @problem.subcriteriaOf(@parent_criterium).count
       evaluation = init_sub_criteria_evaluation
       mat = getMatrix(@problem.subcriteriaOf(@parent_criterium).count, evaluation)
       weights = checkConsistency(mat)
@@ -13,29 +13,27 @@ class CriteriaEvaluationsController < ApplicationController
         @evaluation.problem_id = @problem.id
         @evaluation.criterium_id = @parent_criterium
         @evaluation.user_id = current_user.id
-        @evaluation.criteria_value = weights.to_json
-        @evaluation.criteria_matrix = evaluation.to_json
+        @evaluation.criteria_value = mapIDValue(@problem.subcriteriaOf(@parent_criterium), weights)
+        @evaluation.criteria_matrix = evaluation
         @evaluation.save
       end
     end
     @criteria = @problem.subcriteriaOf(@parent_criterium)
-    @weight   = JSON.parse(@evaluation.criteria_value)
-    @matrix   = JSON.parse(@evaluation.criteria_matrix)
+    @weight   = @evaluation.criteria_value
+    @matrix   = @evaluation.criteria_matrix
   end
 
   def save
     mat = params['matrix']
-    old_mat = JSON.parse(@evaluation.criteria_matrix)
+    old_mat = @evaluation.criteria_matrix
     mat.each_pair do |key, val|
       s, src, trg, v = key.split("-")
-      puts "*_*_*",key, old_mat[src][trg], val.to_f
       old_mat[src][trg] = val.to_f
     end
     mat = getMatrix(@problem.subcriteriaOf(@parent_criterium).count, old_mat)
     weights = checkConsistency(mat)
-    puts "()()()()", weights.to_s, old_mat.to_json
     if weights.class == Array
-      @evaluation.update!(:criteria_matrix => old_mat.to_json, :criteria_value => weights.to_s)
+      @evaluation.update!(:criteria_matrix => old_mat, :criteria_value => mapIDValue(@problem.subcriteriaOf(@parent_criterium), weights))
       render text: I18n.t(:success_save_evaluation), layout: false
     elsif weights == false
       render text: I18n.t(:reevaluate), layout: false

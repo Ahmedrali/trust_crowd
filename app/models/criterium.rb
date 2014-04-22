@@ -10,11 +10,15 @@ class Criterium < ActiveRecord::Base
   validates :name, uniqueness: true
   validates :name, :desc, presence: true
   
-  scope :parentsCriteria, where(:parent_id => -1)
   scope :active, where(:reject => false)
+  scope :firstLevel, where(:reject => false, :parent_id => -1)
   
   def isParent?
-    self.parent_id == -1
+    parent = false
+    Criterium.where(:parent_id => self.id).each do |c|
+      parent = (!c.reject or parent)
+    end
+    parent
   end
   
   def hasSubcriteria?

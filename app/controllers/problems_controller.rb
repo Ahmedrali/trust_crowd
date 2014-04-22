@@ -113,6 +113,8 @@ class ProblemsController < ApplicationController
   end
   
   def finish_evaluation
+    # TODO: calculate the aggregated decision
+    # TODO: send the collective decision for the group e.g. {"alt_1": 0.3, "alt_2": 0.7}
     render text: @problem.id, layout: false
   end
   

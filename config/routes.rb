@@ -36,5 +36,7 @@ TrustCrowd::Application.routes.draw do
     root :to => 'users#index'
   end
   
+  get "/indv" => 'decisions#getIndividual'
+  
   get "/" => 'home#index'
 end

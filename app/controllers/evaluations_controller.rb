@@ -5,39 +5,38 @@ class EvaluationsController < ApplicationController
 
   def get
     @hasSubcriteria = @criterium.hasSubcriteria?
-    unless @evaluation and JSON.parse(@evaluation.alternatives_value).count == @problem.alternatives.count
+    unless @evaluation and @evaluation.alternatives_value.count == @problem.alternatives.where(:reject => false).count
       evaluation = init_problem_criteria_evaluation
-      mat = getMatrix(@problem.alternatives.count, evaluation)
+      puts "evaluation, ", evaluation
+      mat = getMatrix(@problem.alternatives.where(:reject => false).count, evaluation)
+      puts "mat,", mat
       weights = checkConsistency(mat)
       if weights.class == Array
         @evaluation = Evaluation.new unless @evaluation 
         @evaluation.criteria_id = @criterium.id
         @evaluation.user_id = current_user.id
-        @evaluation.alternatives_value = weights.to_json
-        @evaluation.alternatives_matrix = evaluation.to_json
+        @evaluation.alternatives_value = mapIDValue(@problem.alternatives.where(:reject => false), weights)
+        @evaluation.alternatives_matrix = evaluation
         @evaluation.save
       end
     end
-    @alternatives         = @problem.alternatives
-    @alternatives_weight  = JSON.parse(@evaluation.alternatives_value)
-    @alternatives_matrix  = JSON.parse(@evaluation.alternatives_matrix)
+    @alternatives         = @problem.alternatives.where(:reject => false)
+    @alternatives_weight  = @evaluation.alternatives_value
+    @alternatives_matrix  = @evaluation.alternatives_matrix
   end
 
   def save
     mat = params['matrix']
-    old_mat = JSON.parse(@evaluation.alternatives_matrix)
-    puts old_mat
+    old_mat = @evaluation.alternatives_matrix
     mat.each_pair do |key, val|
       s, src, trg, v = key.split("-")
       puts key, old_mat[src][trg], val.to_f
       old_mat[src][trg] = val.to_f
     end
-    puts old_mat
-    mat = getMatrix(@problem.alternatives.count, old_mat)
+    mat = getMatrix(@problem.alternatives.where(:reject => false).count, old_mat)
     weights = checkConsistency(mat)
     if weights.class == Array
-      puts old_mat, weights
-      @evaluation.update!(:alternatives_matrix => old_mat.to_json, :alternatives_value => weights.to_s)
+      @evaluation.update!(:alternatives_matrix => old_mat, :alternatives_value => mapIDValue(@problem.alternatives.where(:reject => false), weights))
       render text: I18n.t(:success_save_evaluation), layout: false
     elsif weights == false
       render text: I18n.t(:reevaluate), layout: false
@@ -59,7 +58,7 @@ class EvaluationsController < ApplicationController
     end
     
     def init_problem_criteria_evaluation
-      alternatives = @problem.alternatives
+      alternatives = @problem.alternatives.where(:reject => false)
       evaluation = {}
       alternatives.each do |src|
         unless evaluation.include?(src.name) or alternatives.last == src

@@ -405,3 +405,62 @@ window.tc.bindUpdateProblemAction = ->
     else
       $("#prob_desc").html id
       tc.bindUpdateProblemAction()
+
+##------------
+## Decisions
+##------------
+
+window.tc.getIndvDecision = (div, id) ->
+  $.ajax
+    url: '/indv'
+    data: {'prob': id}
+    type: "get"
+    success: (resp) ->
+      data = []
+      for r in Object.keys(resp)
+        data.push([ r, resp[r] ])
+      window.tc.plotPieChart(div, data)
+    error: (xhr, ajaxOptions, thrownError)->
+      alert(thrownError)
+    cache: false
+
+##------------
+## Graphs
+##------------
+
+window.tc.plotPieChart = (div, data) ->
+  $('#'+div).highcharts({
+    chart:{
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            backgroundColor: 'rgba(0,0,0,0)'
+          },
+    credits:{
+            enabled: false
+          },
+    title:{
+            text: 'My Evaluation'
+          },
+    tooltip:{
+            pointFormat: '{series.name}: <b>{point.percentage:.2f}%</b>'
+          },
+    plotOptions: {
+      pie:{
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels:{
+              enabled: true,
+              color: '#000000',
+              connectorColor: '#000000',
+              format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+            },
+            showInLegend: true
+          }
+          },
+    series:[{
+            type: 'pie',
+            name: 'Alternatives Score',
+            data: data
+          }]
+      });

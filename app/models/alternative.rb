@@ -3,4 +3,7 @@ class Alternative < ActiveRecord::Base
   
   validates :name, uniqueness: true
   validates :name, :desc, presence: true
+  
+  scope :active, where(:reject => false)
+  
 end

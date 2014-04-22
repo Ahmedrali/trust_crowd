@@ -52,4 +52,13 @@ class ApplicationController < ActionController::Base
   end
 
   
+  # return a map that its key will be the ids of objects in "itr" corresponding to value from vals
+  def mapIDValue(itr, vals)
+    map = {}
+    itr.each_with_index do |v, i|
+      map[v.id] = vals[i]
+    end
+    map
+  end
+  
 end
