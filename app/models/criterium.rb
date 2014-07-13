@@ -13,6 +13,14 @@ class Criterium < ActiveRecord::Base
   scope :active, where(:reject => false)
   scope :firstLevel, where(:reject => false, :parent_id => -1)
   
+  def active?
+    !self.reject
+  end
+  
+  def firstLevel?
+    !self.reject && self.parent_id == -1
+  end
+  
   def isParent?
     parent = false
     Criterium.where(:parent_id => self.id).each do |c|

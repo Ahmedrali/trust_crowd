@@ -46,7 +46,7 @@ class Problem < ActiveRecord::Base
   
   def getParentSubCriteriaForEvaluation
     criteria = {}
-    self.criteria.active.each do |criterium|
+    self.criteria.select(&:active?).each do |criterium|
       criteria.include?(criterium.parent_id) ? criteria[criterium.parent_id].append([criterium.name, criterium.id]) : (criteria[criterium.parent_id] = [[criterium.name, criterium.id]])
     end
     puts criteria
@@ -58,7 +58,8 @@ class Problem < ActiveRecord::Base
     self.criteria.where(:reject => false).each do |criterium|
       criteria.include?(criterium.parent_id) ? criteria[criterium.parent_id].append([criterium.name, criterium.id]) : (criteria[criterium.parent_id] = [[criterium.name, criterium.id]])
     end
-    [["No. Parent", -1]].concat(buildTree(criteria))
+    tree = buildTree(criteria);
+    [["No. Parent", -1]].concat(tree || [])
   end
   
   def buildTree(src)

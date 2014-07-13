@@ -13,36 +13,38 @@ class DecisionsController < ApplicationController
   private
   def calcFinalDecision(problem, user)
     alternatives  = problem.alternatives.where(:reject => false).count
-    criteria = problem.criteria.active.reject(&:isParent?)
+    criteria = problem.criteria.select(&:active?).reject(&:isParent?)
     final_evals = {}
-    problem.criteria.firstLevel.map{|c| final_evals[c.id] = {}}
+    problem.criteria.select(&:active?).select(&:firstLevel?).map{|c| final_evals[c.id] = {}}
     criteria.each do |criterium|
-      eval = Evaluation.where(:criteria_id => criterium.id, :user_id => user.id).first.alternatives_value
-      curr_criteria = criterium.id
-      parent = criterium.parent_id
-      while parent > -1
+      eval = Evaluation.where(:criteria_id => criterium.id, :user_id => user.id).first.alternatives_value rescue nil
+      if eval
+        curr_criteria = criterium.id
+        parent = criterium.parent_id
+        while parent > -1
+          if (criteria_evluation = CriteriaEvaluation.where(:user_id => user.id, :criterium_id => parent, :problem_id => problem.id).first)
+            criteria_wieght = criteria_evluation.criteria_value[curr_criteria]
+          else
+            criteria_wieght = 1/Float(problem.subcriteriaOf(parent).count)
+          end
+          eval.map{|k, v| eval[k] = v * criteria_wieght}
+          curr_criteria = parent
+          parent = Criterium.find(parent).parent_id
+        end
+        # handle the parent of -1
         if (criteria_evluation = CriteriaEvaluation.where(:user_id => user.id, :criterium_id => parent, :problem_id => problem.id).first)
           criteria_wieght = criteria_evluation.criteria_value[curr_criteria]
         else
           criteria_wieght = 1/Float(problem.subcriteriaOf(parent).count)
         end
         eval.map{|k, v| eval[k] = v * criteria_wieght}
-        curr_criteria = parent
-        parent = Criterium.find(parent).parent_id
-      end
-      # handle the parent of -1
-      if (criteria_evluation = CriteriaEvaluation.where(:user_id => user.id, :criterium_id => parent, :problem_id => problem.id).first)
-        criteria_wieght = criteria_evluation.criteria_value[curr_criteria]
-      else
-        criteria_wieght = 1/Float(problem.subcriteriaOf(parent).count)
-      end
-      eval.map{|k, v| eval[k] = v * criteria_wieght}
-      if not final_evals[curr_criteria].empty?
-        eval.each do |k, v|
-          final_evals[curr_criteria][k] += eval[k]
+        if not final_evals[curr_criteria].empty?
+          eval.each do |k, v|
+            final_evals[curr_criteria][k] += eval[k]
+          end
+        else
+          final_evals[curr_criteria] = eval
         end
-      else
-        final_evals[curr_criteria] = eval
       end
     end
     alternatives_values = {}
