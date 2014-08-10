@@ -7,9 +7,7 @@ class EvaluationsController < ApplicationController
     @hasSubcriteria = @criterium.hasSubcriteria?
     unless @evaluation and @evaluation.alternatives_value.count == @problem.alternatives.where(:reject => false).count
       evaluation = init_problem_criteria_evaluation
-      puts "evaluation, ", evaluation
       mat = getMatrix(@problem.alternatives.where(:reject => false).count, evaluation)
-      puts "mat,", mat
       weights = checkConsistency(mat)
       if weights.class == Array
         @evaluation = Evaluation.new unless @evaluation 

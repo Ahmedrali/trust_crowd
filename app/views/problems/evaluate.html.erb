@@ -1,3 +1,4 @@
+<div id="group_decision_chart"> </div>
 <div id="user_decision_chart"> </div>
 
 <div id="evaluation_criteria">
@@ -24,6 +25,7 @@
 	$(function(){
 		var prob_id = <%= @problem.id %>
 		window.tc.getIndvDecision("user_decision_chart", prob_id);
+		window.tc.getGroupDecision("group_decision_chart", prob_id);
 		get_criteria_evaluation_matrix();
 	});
 	

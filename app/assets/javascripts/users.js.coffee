@@ -419,7 +419,21 @@ window.tc.getIndvDecision = (div, id) ->
       data = []
       for r in Object.keys(resp)
         data.push([ r, resp[r] ])
-      window.tc.plotPieChart(div, data)
+      window.tc.plotPieChart(div, data, 'My Evaluation')
+    error: (xhr, ajaxOptions, thrownError)->
+      alert(thrownError)
+    cache: false
+  
+window.tc.getGroupDecision = (div, id) ->
+  $.ajax
+    url: '/coll'
+    data: {'prob': id}
+    type: "get"
+    success: (resp) ->
+      data = []
+      for r in Object.keys(resp)
+        data.push([ r, resp[r] ])
+      window.tc.plotPieChart(div, data, 'Group Evaluation')
     error: (xhr, ajaxOptions, thrownError)->
       alert(thrownError)
     cache: false
@@ -428,7 +442,7 @@ window.tc.getIndvDecision = (div, id) ->
 ## Graphs
 ##------------
 
-window.tc.plotPieChart = (div, data) ->
+window.tc.plotPieChart = (div, data, title) ->
   $('#'+div).highcharts({
     chart:{
             plotBackgroundColor: null,
@@ -440,7 +454,7 @@ window.tc.plotPieChart = (div, data) ->
             enabled: false
           },
     title:{
-            text: 'My Evaluation'
+            text: title
           },
     tooltip:{
             pointFormat: '{series.name}: <b>{point.percentage:.2f}%</b>'

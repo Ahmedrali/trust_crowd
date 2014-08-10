@@ -37,6 +37,9 @@ TrustCrowd::Application.routes.draw do
   end
   
   get "/indv" => 'decisions#getIndividual'
+  get "/coll" => 'decisions#getCollectiveDecision'
+  get '/u_sat' =>  'decisions#user_satisfactory'
+  get '/g_sat' =>  'decisions#group_satisfactory'
   
   get "/" => 'home#index'
 end
