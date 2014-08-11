@@ -8,6 +8,12 @@ TrustCrowd::Application.routes.draw do
     get :evaluate,            :on => :member
     get :evaluate_criteria,   :on => :member
     get :finish_evaluation,   :on => :member
+    resources :trusts do
+        post "/trust/:user_id" => 'trusts#trust', :on => :collection
+        delete "/untrust/:user_id" => 'trusts#untrust', :on => :collection
+        post "/delegate/:user_id" => 'trusts#delegate', :on => :collection
+        post "/undelegate/:user_id" => 'trusts#undelegate', :on => :collection
+    end
     resources :alternatives do
       get :rejected, :on => :collection
       get :active,   :on => :member
@@ -42,4 +48,5 @@ TrustCrowd::Application.routes.draw do
   get '/g_sat' =>  'decisions#group_satisfactory'
   
   get "/" => 'home#index'
+  
 end

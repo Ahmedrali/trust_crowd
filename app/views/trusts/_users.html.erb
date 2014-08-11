@@ -1,0 +1,25 @@
+
+<h3>Participated Users</h3>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th># Trustee</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% users.each do |user| %>
+      <tr>
+        <td><%= "#{user.twitter_nickname} (#{user.email})" %></td>
+        <td><%= user.trustee(problem).count %></td>
+        <td class="text-right"><%= link_to 'Trust', "/problems/#{@problem.id}/trusts/trust/#{user.id}", method: :post, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br />
+<%= will_paginate users %>

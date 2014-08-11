@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   has_many  :users_problems
   has_many  :problems, :through => :users_problems
   has_many  :evaluations
+  has_many  :trusts
   
   def self.find_for_twitter(auth, signed_in_resource=nil)
     tw_id       = auth["uid"]
@@ -23,5 +24,13 @@ class User < ActiveRecord::Base
                              )
     end
     user
+  end
+  
+  def trustee(problem)
+    User.where(:id => Trust.where(:to => self.id, :problem_id => problem.id).map{|t| t.user_id} )
+  end
+  
+  def delegated_user(problem)
+    self.trusts.where(:delegate => true, :problem_id => problem.id).first
   end
 end

@@ -7,6 +7,7 @@ class Problem < ActiveRecord::Base
   has_many  :alternatives
   has_many  :criteria
   has_many  :tweets
+  has_many  :trusts
   
   validates :name, uniqueness: true
   validates :name, :desc, presence: true

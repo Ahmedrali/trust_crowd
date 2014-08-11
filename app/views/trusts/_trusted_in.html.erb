@@ -1,0 +1,30 @@
+<h3>Trusted Users</h3>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th># Trustee</th>
+      <th></th>
+      <% unless delegated %>
+      	<th></th>
+      <% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% users.each do |user| %>
+      <tr>
+        <td><%= "#{user.twitter_nickname} (#{user.email})" %></td>
+        <td><%= user.trustee(problem).count %></td>
+        <td class="text-right"><%= link_to 'Untrust', "/problems/#{@problem.id}/trusts/untrust/#{user.id}", method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% unless delegated %>
+        	<td class="text-right"><%= link_to 'delegate', "/problems/#{@problem.id}/trusts/delegate/#{user.id}", method: :post, data: { confirm: 'Are you sure?' } %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br />
+<%= will_paginate users %>

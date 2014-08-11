@@ -99,7 +99,7 @@ class DecisionsController < ApplicationController
     problem.alternatives.where(:reject => false).map {|a| alts_name_id[a.name] = a.id; alts_id_name[a.id] = a.name;}
     alternatives  = alts_name_id.values.sort
     dms           = {}
-    problem.users.each do |u| 
+    problem.users.each do |u|
       dms[u.id] = calcFinalDecision(problem, u)
     end
     wDiff = w_diff(alternatives, problem, dms, alts_name_id)
@@ -259,6 +259,11 @@ class DecisionsController < ApplicationController
 
 
   def calcFinalDecision(problem, user)
+    
+    # take the trusted user evaluation by default if the user delegate his power to some one else
+    delegated = user.delegated_user(problem)
+    user = User.find(user.trusts.where(:delegate => true).first.to) if delegated
+    
     alternatives  = problem.alternatives.where(:reject => false).count
     criteria = problem.criteria.select(&:active?).reject(&:isParent?)
     final_evals = {}

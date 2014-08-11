@@ -1,0 +1,25 @@
+<div class="container">
+	<% if @delegated %>
+		<div width="50%">
+			You delegated your choice to '<%= @delegated_user.twitter_nickname %> ( <%= @delegated_user.email %> )'. 
+			<%= link_to 'Revoke Delegation', "/problems/#{@problem.id}/trusts/undelegate/#{@delegated_user.id}", method: :post, data: { confirm: 'Are you sure?' } %>
+		</div>
+	<% end %>
+	<div width="50%" style="float: right">
+		<% unless @trusted_users.empty? %>
+		    <div>
+				<%= render 'trusted_in', :users => @trusted_users, :problem => @problem, :delegated => @delegated %>
+		    </div>
+	    <% end %>
+	    <% unless @trustee_users.empty? %>
+		    <div>
+				<%= render 'trustee', :users => @trustee_users, :problem => @problem %>
+		    </div>
+	    <% end %>
+    </div>
+    <% unless @users.empty? %>
+	    <div width="50%" style="float: left">
+			<%= render 'users', :users => @users, :problem => @problem %>
+	    </div>
+    <% end %>
+</div>

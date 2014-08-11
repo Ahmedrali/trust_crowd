@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131207062903) do
+ActiveRecord::Schema.define(version: 20140810103916) do
 
   create_table "alternatives", force: true do |t|
     t.string   "name"
@@ -93,6 +93,18 @@ ActiveRecord::Schema.define(version: 20131207062903) do
     t.integer  "last_tweet_id",   limit: 8
     t.text     "criteria_matrix"
   end
+
+  create_table "trusts", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "to"
+    t.integer  "problem_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "delegate",   default: false
+  end
+
+  add_index "trusts", ["problem_id"], name: "index_trusts_on_problem_id"
+  add_index "trusts", ["user_id"], name: "index_trusts_on_user_id"
 
   create_table "tweets", force: true do |t|
     t.integer  "problem_id"
