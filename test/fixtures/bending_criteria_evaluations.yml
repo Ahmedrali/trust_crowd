@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  problem_id: 
+  criterium_id: 
+  user_id: 
+  accept: false
+
+two:
+  problem_id: 
+  criterium_id: 
+  user_id: 
+  accept: false

@@ -1,17 +1,50 @@
 class CriteriaController < ApplicationController
-  before_action :set_criterium, only: [:show, :edit, :update, :destroy, :active, :ranking, :save_evaluation]
+  before_action :set_criterium, only: [:show, :edit, :update, :destroy, :active, :ranking, :save_evaluation, :vote, :finish_voting]
   before_action :set_problem
   
   # GET /problems/:problem_id/criteria
   def index
-    @criteria = @problem.criteria.where(:reject => false).paginate(:page => params[:page])
+    @criteria = @problem.criteria.where(:pending => false, :reject => false).paginate(:page => params[:page])
     render layout: false
   end
 
-  # GET /problems/:problem_id/criteria
-  def rejected
-    @criteria = @problem.criteria.where(:reject => true).paginate(:page => params[:page])
+  # GET /problems/:problem_id/criteria/pending
+  def pending
+    @criteria = @problem.criteria.where(:pending => true).paginate(:page => params[:page])
     render layout: false
+  end
+
+  # GET /problems/:problem_id/criteria/rejected
+  def rejected
+    @criteria = @problem.criteria.where(:pending => false, :reject => true).paginate(:page => params[:page])
+    render layout: false
+  end
+  
+  # POST /problems/:problem_id/criteria/:id/vote/:decision
+  def vote
+    decision = params[:decision] == "true"
+    if @criterium.pendingCriteriaEvaluations.exists?(:user_id => current_user.id)
+      @criterium.pendingCriteriaEvaluations.find_by(:user_id => current_user.id).update(:decision => decision)
+      msg = "updated"
+    else
+      PendingCriteriaEvaluation.create(:problem_id => @problem.id, :criterium_id => @criterium.id, :user_id => current_user.id, :decision => decision)
+      msg = "created"
+    end
+    render text: msg, layout: false
+  end
+  
+  # GET /problems/:problem_id/criteria/:id/finish_voting
+  def finish_voting
+    @criterium.pending = false
+    if @criterium.acceptance_votes > @criterium.refused_votes
+      @criterium.reject = false
+      msg = "accepted"
+    else
+      @criterium.reject = true
+      msg = "refused"
+    end
+    @criterium.save
+    render text: msg, layout: false
   end
   
   # GET /problems/:problem_id/criteria/1
@@ -34,6 +67,8 @@ class CriteriaController < ApplicationController
   def create
     @criterium = @problem.criteria.new(criterium_params)
     @criterium.tw_hash  = "#{@problem.tw_hash}_c#{@problem.criteria.count}"
+    @criterium.pending = true
+    @criterium.reject = true
     if @criterium.save
       render text: @criterium.id, layout: false
     else

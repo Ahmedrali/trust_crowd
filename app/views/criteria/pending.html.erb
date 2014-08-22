@@ -1,0 +1,41 @@
+<% if @criteria.count > 0 %>
+	<h3>Pending criteria</h3>
+	<table class="table table-hover">
+	  <thead>
+	    <tr>
+	      <th>Name</th>
+	      <th>Desc</th>
+	      <th>Tw hash</th>
+	      <th># Acceptance</th>
+	      <th># Refused</th>
+	      <th></th>
+	      <th></th>
+	      <% if current_user.own?(@problem) %>
+	      	<th></th>
+	      <% end %>
+	    </tr>
+	  </thead>
+	
+	  <tbody>
+	    <% @criteria.each do |criterium| %>
+	      <tr>
+	        <td><%= criterium.name %></td>
+	        <td><%= criterium.desc %></td>
+	        <td><%= criterium.tw_hash %></td>
+	        <td><%= criterium.acceptance_votes %></td>
+	        <td><%= criterium.refused_votes %></td>
+	        <td><%= link_to "Accept", "/problems/#{@problem.id}/criteria/#{criterium.id}/vote/true", :class => "criteria-accept-voting", :remote => true %></td>
+	        <td><%= link_to "Refuse", "/problems/#{@problem.id}/criteria/#{criterium.id}/vote/false", :class => "criteria-refuse-voting", :remote => true %></td>
+	        <% if current_user.own?(@problem) %>
+	        	<td><%= link_to "Finish Voting", finish_voting_problem_criterium_path(@problem, criterium), :class => "criteria-finish-voting", :remote => true %></td>
+	        <% end %>
+	      </tr>
+	    <% end %>
+	  </tbody>
+	</table>
+	<%= will_paginate @criteria, :class => "criteria-pending-pagination pagination" %>
+<% else %>
+	<div align="center">
+		<h4> There is no pending criteria.</h4>
+	</div>
+<% end %>

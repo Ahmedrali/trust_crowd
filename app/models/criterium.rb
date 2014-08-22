@@ -6,6 +6,7 @@ class Criterium < ActiveRecord::Base
   
   belongs_to :problem
   has_many :evaluations
+  has_many :pendingCriteriaEvaluations
   
   validates :name, uniqueness: true
   validates :name, :desc, presence: true
@@ -41,7 +42,13 @@ class Criterium < ActiveRecord::Base
     self.subcriteria.where(:reject => false).count > 1
   end
   
+  def acceptance_votes
+    self.pendingCriteriaEvaluations.where(:decision => true).count
+  end
   
+  def refused_votes
+    self.pendingCriteriaEvaluations.where(:decision => false).count
+  end
   
   def self.w_diff(problem)
     dms           = {}

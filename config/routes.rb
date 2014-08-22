@@ -20,8 +20,11 @@ TrustCrowd::Application.routes.draw do
     end
     
     resources :criteria do
-      get :rejected,  :on => :collection
-      get :active,    :on => :member
+      get :pending,       :on => :collection
+      get :rejected,      :on => :collection
+      get :active,        :on => :member
+      get :finish_voting, :on => :member
+      get "vote/:decision" => "criteria#vote", :on => :member
       
       resources :evaluations do
         get :get, :on => :collection

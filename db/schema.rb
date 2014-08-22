@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140810103916) do
+ActiveRecord::Schema.define(version: 20140811070258) do
 
   create_table "alternatives", force: true do |t|
     t.string   "name"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20140810103916) do
     t.datetime "updated_at"
     t.boolean  "reject",                  default: false
     t.integer  "last_tweet_id", limit: 8
+    t.boolean  "pending",                 default: false
   end
 
   add_index "alternatives", ["problem_id"], name: "index_alternatives_on_problem_id"
@@ -38,6 +39,7 @@ ActiveRecord::Schema.define(version: 20140810103916) do
     t.boolean  "reject",                  default: false
     t.integer  "last_tweet_id", limit: 8
     t.integer  "parent_id",               default: -1
+    t.boolean  "pending",                 default: false
   end
 
   add_index "criteria", ["problem_id"], name: "index_criteria_on_problem_id"
@@ -82,6 +84,32 @@ ActiveRecord::Schema.define(version: 20140810103916) do
 
   add_index "installs", ["email"], name: "index_installs_on_email", unique: true
   add_index "installs", ["reset_password_token"], name: "index_installs_on_reset_password_token", unique: true
+
+  create_table "pending_alternatives_evaluations", force: true do |t|
+    t.integer  "problem_id"
+    t.integer  "alternative_id"
+    t.integer  "user_id"
+    t.boolean  "decision"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "pending_alternatives_evaluations", ["alternative_id"], name: "index_pending_alternatives_evaluations_on_alternative_id"
+  add_index "pending_alternatives_evaluations", ["problem_id"], name: "index_pending_alternatives_evaluations_on_problem_id"
+  add_index "pending_alternatives_evaluations", ["user_id"], name: "index_pending_alternatives_evaluations_on_user_id"
+
+  create_table "pending_criteria_evaluations", force: true do |t|
+    t.integer  "problem_id"
+    t.integer  "criterium_id"
+    t.integer  "user_id"
+    t.boolean  "decision"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "pending_criteria_evaluations", ["criterium_id"], name: "index_pending_criteria_evaluations_on_criterium_id"
+  add_index "pending_criteria_evaluations", ["problem_id"], name: "index_pending_criteria_evaluations_on_problem_id"
+  add_index "pending_criteria_evaluations", ["user_id"], name: "index_pending_criteria_evaluations_on_user_id"
 
   create_table "problems", force: true do |t|
     t.string   "name"

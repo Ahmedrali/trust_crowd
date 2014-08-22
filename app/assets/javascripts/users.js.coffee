@@ -29,6 +29,7 @@ window.tc.showProblemDetails = (id, prob_desc) ->
 
 window.tc.handleCriteria = (id) ->
   tc.getActiveCriteria id
+  tc.getPendingCriteria id
   tc.getRejectedCriteria id
   tc.bindCreateCriteria id
   tc.hideCriteriaContentArea()
@@ -191,6 +192,16 @@ window.tc.getRejectedCriteria = (id) ->
     error: (xhr, ajaxOptions, thrownError)->
       alert(thrownError)
     cache: false
+  
+window.tc.getPendingCriteria = (id) ->
+  $.ajax
+    url: '/problems/' + id + '/criteria/pending'
+    type: "get"
+    success: (resp) ->
+      tc.bindPendingCriteriaLinks id, resp
+    error: (xhr, ajaxOptions, thrownError)->
+      alert(thrownError)
+    cache: false
 
 window.tc.bindActiveCriteriaLinks = (id, resp) ->
   $("#prob_active_criteria").html resp
@@ -217,6 +228,18 @@ window.tc.bindRejectedCriteriaLinks = (id, resp) ->
     tc.getRejectedCriteria id
   tc.criteriaRejectedPagination id
 
+window.tc.bindPendingCriteriaLinks = (id, resp) ->
+  $("#prob_pending_criteria").html resp
+  $(".criteria-accept-voting").bind "ajax:complete", (et, e) ->
+    tc.getPendingCriteria id
+  $(".criteria-refuse-voting").bind "ajax:complete", (et, e) ->
+    tc.getPendingCriteria id    
+  $(".criteria-finish-voting").bind "ajax:complete", (et, e) ->
+    tc.getActiveCriteria id
+    tc.getPendingCriteria id
+    tc.getRejectedCriteria id
+  tc.criteriaPendingPagination id
+
 window.tc.createNewCriteria = (id) ->
   $.ajax
     url: '/problems/' + id + '/criteria/new'
@@ -241,6 +264,7 @@ window.tc.bindCreateNewCriteriaAction = (id) ->
           alert(thrownError)
         cache: false
       tc.getActiveCriteria id
+      tc.getPendingCriteria id
     else
       $("#criteria_content").html res
       tc.bindCreateNewCriteriaAction id
@@ -283,6 +307,18 @@ window.tc.criteriaRejectedPagination = (id) ->
     $('.criteria-rejected-pagination a').bind "ajax:complete", (et, e) ->
       resp = e.responseText
       tc.bindRejectedCriteriaLinks id, resp
+
+window.tc.criteriaPendingPagination = (id) ->
+  if($(".criteria-pending-pagination").length > 0)
+    $(".criteria-pending-pagination").addClass "pagination-centered"
+    $('.criteria-pending-pagination a').attr("data-remote", "true")
+    $('.criteria-pending-pagination a').wrap "<li />"
+    $('.criteria-pending-pagination span').wrap "<li />"
+    $('.criteria-pending-pagination em').wrapInner('<span />').wrapInner('<li class="active" />')
+    $('.criteria-pending-pagination li').wrapAll "<ul />"
+    $('.criteria-pending-pagination a').bind "ajax:complete", (et, e) ->
+      resp = e.responseText
+      tc.bindpendingCriteriaLinks id, resp
 
 ## ---------------
 ## Problem Methods

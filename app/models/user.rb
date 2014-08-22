@@ -33,4 +33,8 @@ class User < ActiveRecord::Base
   def delegated_user(problem)
     self.trusts.where(:delegate => true, :problem_id => problem.id).first
   end
+  
+  def own?(problem)
+    self.users_problems.find_by(:problem_id => problem.id).owner
+  end
 end
