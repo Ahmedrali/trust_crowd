@@ -1,17 +1,50 @@
 class AlternativesController < ApplicationController
-  before_action :set_alternative, only: [:show, :edit, :update, :destroy, :active]
+  before_action :set_alternative, only: [:show, :edit, :update, :destroy, :active, :vote, :finish_voting]
   before_action :set_problem
   
   # GET /problems/:problem_id/alternatives
   def index
-    @alternatives = @problem.alternatives.where(:reject => false).paginate(:page => params[:page])
+    @alternatives = @problem.alternatives.where(:pending => false, :reject => false).paginate(:page => params[:page])
+    render layout: false
+  end
+
+  # GET /problems/:problem_id/alternatives/pending
+  def pending
+    @alternatives = @problem.alternatives.where(:pending => true).paginate(:page => params[:page])
     render layout: false
   end
 
   # GET /problems/:problem_id/alternatives
   def rejected
-    @alternatives = @problem.alternatives.where(:reject => true).paginate(:page => params[:page])
+    @alternatives = @problem.alternatives.where(:pending => false, :reject => true).paginate(:page => params[:page])
     render layout: false
+  end
+  
+  # POST /problems/:problem_id/alternatives/:id/vote/:decision
+  def vote
+    decision = params[:decision] == "true"
+    if @alternative.pendingAlternativesEvaluations.exists?(:user_id => current_user.id)
+      @alternative.pendingAlternativesEvaluations.find_by(:user_id => current_user.id).update(:decision => decision)
+      msg = "updated"
+    else
+      PendingAlternativesEvaluation.create(:problem_id => @problem.id, :alternative_id => @alternative.id, :user_id => current_user.id, :decision => decision)
+      msg = "created"
+    end
+    render text: msg, layout: false
+  end
+  
+  # GET /problems/:problem_id/alternatives/:id/finish_voting
+  def finish_voting
+    @alternative.pending = false
+    if @alternative.acceptance_votes > @alternative.refused_votes
+      @alternative.reject = false
+      msg = "accepted"
+    else
+      @alternative.reject = true
+      msg = "refused"
+    end
+    @alternative.save
+    render text: msg, layout: false
   end
 
   # GET /problems/:problem_id/alternatives/1
@@ -34,6 +67,13 @@ class AlternativesController < ApplicationController
   def create
     @alternative = @problem.alternatives.new(alternative_params)
     @alternative.tw_hash  = "#{@problem.tw_hash}_a#{@problem.alternatives.count}"
+    if @problem.active?
+      @alternative.pending = true
+      @alternative.reject  = true
+    else
+      @alternative.pending = false
+      @alternative.reject  = false
+    end
     if @alternative.save
       render text: @alternative.id, layout: false
     else

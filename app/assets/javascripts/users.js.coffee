@@ -36,6 +36,7 @@ window.tc.handleCriteria = (id) ->
 
 window.tc.handleAlternatives = (id) ->
   tc.getActiveAlternatives id
+  tc.getPendingAlternatives id
   tc.getRejectedAlternatives id
   tc.bindCreateAlternative id
   tc.hideAlternativesContentArea()
@@ -77,6 +78,16 @@ window.tc.getRejectedAlternatives = (id) ->
       alert(thrownError)
     cache: false
 
+window.tc.getPendingAlternatives = (id) ->
+  $.ajax
+    url: '/problems/' + id + '/alternatives/pending'
+    type: "get"
+    success: (resp) ->
+      tc.bindPendingAlternativesLinks id, resp
+    error: (xhr, ajaxOptions, thrownError)->
+      alert(thrownError)
+    cache: false
+
 window.tc.bindActiveAlternativesLinks = (id, resp) ->
   $("#prob_active_alts").html resp
   
@@ -101,6 +112,18 @@ window.tc.bindRejectedAlternativesLinks = (id, resp) ->
     tc.getActiveAlternatives id
     tc.getRejectedAlternatives id
   tc.altRejectedPagination id
+
+window.tc.bindPendingAlternativesLinks = (id, resp) ->
+  $("#prob_pending_alts").html resp
+  $(".alt-accept-voting").bind "ajax:complete", (et, e) ->
+    tc.getPendingAlternatives id
+  $(".alt-refuse-voting").bind "ajax:complete", (et, e) ->
+    tc.getPendingAlternatives id    
+  $(".alt-finish-voting").bind "ajax:complete", (et, e) ->
+    tc.getActiveAlternatives id
+    tc.getPendingAlternatives id
+    tc.getRejectedAlternatives id
+  tc.altPendingPagination id
   
 window.tc.createNewAlternative = (id) ->
   $.ajax
@@ -126,6 +149,7 @@ window.tc.bindCreateNewAlternativeAction = (id) ->
           alert(thrownError)
         cache: false
       tc.getActiveAlternatives id
+      tc.getPendingAlternatives id
     else
       $("#alternatives_content").html res
       tc.bindCreateNewAlternativeAction id
@@ -168,6 +192,18 @@ window.tc.altRejectedPagination = (id) ->
     $('.alt-rejected-pagination a').bind "ajax:complete", (et, e) ->
       resp = e.responseText
       tc.bindRejectedAlternativesLinks id, resp
+    
+window.tc.altPendingPagination = (id) ->
+  if($(".alt-pending-pagination").length > 0)
+    $(".alt-pending-pagination").addClass "pagination-centered"
+    $('.alt-pending-pagination a').attr("data-remote", "true")
+    $('.alt-pending-pagination a').wrap "<li />"
+    $('.alt-pending-pagination span').wrap "<li />"
+    $('.alt-pending-pagination em').wrapInner('<span />').wrapInner('<li class="active" />')
+    $('.alt-pending-pagination li').wrapAll "<ul />"
+    $('.alt-pending-pagination a').bind "ajax:complete", (et, e) ->
+      resp = e.responseText
+      tc.bindPendingAlternativesLinks id, resp
       
 ## ----------------
 ## Criteria Methods

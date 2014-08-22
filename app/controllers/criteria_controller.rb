@@ -67,8 +67,13 @@ class CriteriaController < ApplicationController
   def create
     @criterium = @problem.criteria.new(criterium_params)
     @criterium.tw_hash  = "#{@problem.tw_hash}_c#{@problem.criteria.count}"
-    @criterium.pending = true
-    @criterium.reject = true
+    if @problem.active?
+      @criterium.pending = true
+      @criterium.reject  = true
+    else
+      @criterium.pending = false
+      @criterium.reject  = false
+    end
     if @criterium.save
       render text: @criterium.id, layout: false
     else
