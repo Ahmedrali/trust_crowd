@@ -15,8 +15,11 @@ TrustCrowd::Application.routes.draw do
         post "/undelegate/:user_id" => 'trusts#undelegate', :on => :collection
     end
     resources :alternatives do
-      get :rejected, :on => :collection
-      get :active,   :on => :member
+      get :pending,       :on => :collection
+      get :rejected,      :on => :collection
+      get :active,        :on => :member
+      get :finish_voting, :on => :member
+      get "vote/:decision" => "alternatives#vote", :on => :member
     end
     
     resources :criteria do

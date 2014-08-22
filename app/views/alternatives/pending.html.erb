@@ -1,0 +1,41 @@
+<% if @alternatives.count > 0 %>
+	<h3>Pending alternatives</h3>
+	<table class="table table-hover">
+	  <thead>
+	    <tr>
+	      <th>Name</th>
+	      <th>Desc</th>
+	      <th>Tw hash</th>
+	      <th># Acceptance</th>
+	      <th># Refused</th>
+	      <th></th>
+	      <th></th>
+	      <% if current_user.own?(@problem) %>
+	      	<th></th>
+	      <% end %>
+	    </tr>
+	  </thead>
+	
+	  <tbody>
+	    <% @alternatives.each do |alternative| %>
+	      <tr>
+	        <td><%= alternative.name %></td>
+	        <td><%= alternative.desc %></td>
+	        <td><%= alternative.tw_hash %></td>
+	        <td><%= alternative.acceptance_votes %></td>
+	        <td><%= alternative.refused_votes %></td>
+	        <td><%= link_to "Accept", "/problems/#{@problem.id}/alternatives/#{alternative.id}/vote/true", :class => "alt-accept-voting", :remote => true %></td>
+	        <td><%= link_to "Refuse", "/problems/#{@problem.id}/alternatives/#{alternative.id}/vote/false", :class => "alt-refuse-voting", :remote => true %></td>
+	        <% if current_user.own?(@problem) %>
+	        	<td><%= link_to "Finish Voting", finish_voting_problem_alternative_path(@problem, alternative), :class => "alt-finish-voting", :remote => true %></td>
+	        <% end %>
+	      </tr>
+	    <% end %>
+	  </tbody>
+	</table>
+	<%= will_paginate @alternatives, :class => "alt-pending-pagination pagination" %>
+<% else %>
+	<div align="center">
+		<h4> There is no pending alternatives.</h4>
+	</div>
+<% end %>
